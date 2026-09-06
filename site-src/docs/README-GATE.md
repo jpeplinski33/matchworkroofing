@@ -61,3 +61,20 @@ Copy `site-src/docs/` back over `docs/` (minus this file), delete `.staticrypt.j
 - The gate page itself carries `<meta name="robots" content="noindex, nofollow">`. The page
   bodies are ciphertext, so there is nothing for a crawler to index either way.
 - `robots.txt` is unchanged.
+
+## What this gate does and does not cover
+
+It covers **the website**: `https://matchworkroofing.com` and every deep link into it. A visitor,
+a competitor, or a crawler gets ciphertext and a passphrase prompt, nothing else.
+
+It does **not** cover **this GitHub repository**, which is public. The plaintext pages are
+readable on github.com two ways:
+
+1. `site-src/docs/` at the tip of the branch, and
+2. commit `f7ce5f3`, which added the whole site in plaintext — that is in the public history
+   whether or not `site-src/` exists, and rewriting history would not reliably remove it.
+
+If the repo needs to be private too, that is a GitHub setting change for the repo owner.
+Note before flipping it: publishing GitHub Pages from a **private** repo requires a paid
+GitHub plan, so on a free plan making the repo private will take the site offline entirely
+rather than just gating it. Decide which you want.
