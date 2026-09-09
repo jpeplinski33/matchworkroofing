@@ -1,80 +1,52 @@
 # Private preview gate (StatiCrypt)
 
 `matchworkroofing.com` is published by GitHub Pages from **branch `main`, folder `/docs`**.
-While the new site is being built, every page in `/docs` is **encrypted at rest** and unlocked
-in the browser with a shared passphrase.
-
-- Encryption: **AES-256-CBC** via the browser's Web Crypto API.
-- Key derivation: **PBKDF2-SHA256, 600,000 iterations**, with the salt in `.staticrypt.json`
-  (repo root). The salt is not a secret; the passphrase is never stored in this repo.
-- "Remember me" keeps the derived key in `localStorage` for **30 days**, so internal links
-  between gated pages unlock without re-typing.
-- Tool: [StatiCrypt](https://github.com/robinmoisson/staticrypt) v3.5.4.
+Every HTML page in `/docs` is **encrypted at rest** (AES-256-CBC, PBKDF2-SHA256 600k iterations,
+StatiCrypt v3.5.4) and unlocked in the browser with a shared passphrase. "Remember me" keeps the
+derived key in `localStorage` for 30 days so internal links unlock without re-typing.
+The gate page hops `http://` -> `https://` first, because Web Crypto only exists on secure origins.
 
 ## Layout
 
 | Path | What it is |
 | --- | --- |
-| `site-src/docs/` | **Plaintext source.** Edit here. Not published. |
-| `site-src/gate-template.html` | The navy gate page (custom StatiCrypt template, `noindex`). |
+| `~/Projects/matchwork-website-revamp-2026-09-06/mock-v2/` | **The real source.** Edit `src/`, run `python3 build.py`. Not in this repo. |
+| `site-src/docs/` | Plaintext snapshot of the last built site that was encrypted. Not published. |
+| `site-src/gate-template.html` | The navy gate page (custom StatiCrypt template, `noindex`, https hop). |
 | `docs/` | **Generated, encrypted output.** This is what GitHub Pages serves. Do not hand-edit. |
-| `.staticrypt.json` | The salt. Committed on purpose so re-encrypting keeps existing "remember me" sessions valid. |
+| `.staticrypt.json` | The salt. Committed on purpose so re-encrypting keeps "remember me" sessions valid. |
 
-Non-HTML files (`CNAME`, `robots.txt`, `sitemap.xml`, this README) are copied through unchanged.
+Non-HTML files (`CNAME`, `robots.txt`, `sitemap.xml`, `assets/`, this README) are copied through unchanged.
+`_headers` / `_redirects` are inert on GitHub Pages; they are for the later Cloudflare Pages cut-over.
 
 ## Re-encrypt after editing
 
-Edit the pages under `site-src/docs/`, then run this one command from the repo root.
-It prompts for the passphrase — do not put the passphrase on the command line.
+1. In `mock-v2/`: `python3 build.py && python3 build.py --check && python3 tools/verify.py`
+2. Copy the build output (everything except `src/ tools/ copy/ returns/ *.md build.py config.json`)
+   plus `CNAME` and this README over `site-src/docs/`.
+3. From the repo root, with the passphrase in the environment (never on the command line):
 
 ```sh
-npx --yes staticrypt site-src/docs -r -d . -c .staticrypt.json --remember 30 \
-  -t site-src/gate-template.html \
+STATICRYPT_PASSWORD='<passphrase>' npx --yes staticrypt site-src/docs -r -d . --short \
+  -c .staticrypt.json --remember 30 -t site-src/gate-template.html \
   --template-title "Matchwork Roofing — private preview" \
   --template-instructions "This site is in private preview. Enter the passphrase to continue." \
-  --template-placeholder "Passphrase" \
-  --template-button "Enter" \
+  --template-placeholder "Passphrase" --template-button "Enter" \
   --template-remember "Remember me on this device for 30 days" \
   --template-error "That passphrase is not correct." \
-  --template-color-primary "#1e3a6e" \
-  --template-color-secondary "#10233f"
+  --template-color-primary "#1e3a6e" --template-color-secondary "#10233f"
 ```
 
-Then commit both `site-src/` and the regenerated `docs/`.
-
-## Preview locally
-
-```sh
-python3 -m http.server 8851 --directory docs
-# then open http://127.0.0.1:8851/
-```
+StatiCrypt writes to `<-d>/<input path>`, so run it in a scratch dir and rsync the result into `docs/`
+(see the 2026-09-09 session notes). `--short` suppresses the interactive short-password prompt that
+otherwise hangs a non-interactive run.
 
 ## Taking the site public again
 
-Copy `site-src/docs/` back over `docs/` (minus this file), delete `.staticrypt.json` and
-`site-src/`, and commit. Nothing else in the pages was modified by the gate.
-
-## Notes
-
-- The passphrase is **not** in this repo, in any commit message, or in the PR. It is held
-  separately by Jordan.
-- The gate page itself carries `<meta name="robots" content="noindex, nofollow">`. The page
-  bodies are ciphertext, so there is nothing for a crawler to index either way.
-- `robots.txt` is unchanged.
+Copy `site-src/docs/` over `docs/` (minus this file), delete `.staticrypt.json` and `site-src/`, commit.
 
 ## What this gate does and does not cover
 
-It covers **the website**: `https://matchworkroofing.com` and every deep link into it. A visitor,
-a competitor, or a crawler gets ciphertext and a passphrase prompt, nothing else.
-
-It does **not** cover **this GitHub repository**, which is public. The plaintext pages are
-readable on github.com two ways:
-
-1. `site-src/docs/` at the tip of the branch, and
-2. commit `f7ce5f3`, which added the whole site in plaintext — that is in the public history
-   whether or not `site-src/` exists, and rewriting history would not reliably remove it.
-
-If the repo needs to be private too, that is a GitHub setting change for the repo owner.
-Note before flipping it: publishing GitHub Pages from a **private** repo requires a paid
-GitHub plan, so on a free plan making the repo private will take the site offline entirely
-rather than just gating it. Decide which you want.
+It covers the website: every page on `matchworkroofing.com` is ciphertext plus a passphrase prompt.
+It does not cover this public GitHub repository: `site-src/docs/` is plaintext on github.com, and the
+original site is in commit history. Making the repo private on a free plan takes GitHub Pages offline.

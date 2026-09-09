@@ -1,0 +1,2324 @@
+/* ============================================================================
+   Matchwork Roofing — site.css
+   Hand-written, plain CSS. No framework, no build step, no @import.
+   Fonts (Sora 600/700, Inter 400/500/600) are <link>ed from the head partial.
+   Owner: worker B. Contract: BUILD-SPEC.md §4. Intent: VERDICT.md §6.1.
+   ----------------------------------------------------------------------------
+   TOKEN MAP — every value is deliberate; tools/contrast_check.py proves the
+   text pairs against WCAG AA and exits 1 if any pair regresses.
+
+     --navy-950 #101a3a  footer ground ONLY (v1 used it everywhere; too black)
+     --navy-900 #1a2a5e  hero + dark sections (has blue in it — VERDICT §6.1)
+     --navy-800 #23397a  cards on dark, photo-slot ground, icon wells on dark
+     --navy-700 #33497a  borders/hairlines on dark (decorative, non-text)
+     --gold-400 #f5a524  THE accent: buttons, icons on dark, focus rings
+     --gold-300 #f8c65c  eyebrows on dark, hover on dark, photo-slot labels
+     --ink      #16202e  body text on light, text on the gold button
+     --ink-2    #4f5b6b  muted body text on light          (6.5:1 on --paper)
+     --ink-dark #ffffff  text on dark grounds
+     --ink-dark-2 #c9d3e4 muted text on dark               (10.8:1 on navy-900)
+     --paper    #fbf8f2  warm off-white page ground
+     --paper-2  #f4eee2  tinted section ground (.mw-section--tint)
+     --surface  #fffdf9  card ground on light  [added: §4 folds card+tint into
+                         --paper-2; two values are needed so a card inside a
+                         tinted section still reads as raised]
+     --line     #e6ded0  decorative hairlines on light
+     --line-strong #7d7666 form-control borders on light (4.4:1 — AA non-text)
+     --error    #b42318 / --error-bg #fdeceb / --error-line #e9b4ae
+     --success  #146c43 / --success-bg #eaf6ef / --success-line #a8d7bd
+     --radius 12px · --radius-sm 8px · --radius-pill 999px
+     --shadow (resting) · --shadow-lift (hover)
+
+   TYPE: body 17px/1.6 Inter · display Sora 600/700 · headings max weight 700
+   · no serif anywhere · no gradient text · nothing below 13px (the floor is
+   .mw-footer__legal / .mw-field__hint / .mw-field__error at 14px, and
+   .mw-eyebrow at 13px which is the only uppercase in the system).
+
+   BREAKPOINTS (max-width, mobile-last): 1080 · 900 (nav -> hamburger)
+   · 768 (call bar appears) · 640 · 480 (header CTA hides — the call bar
+   carries the same action).
+   ========================================================================== */
+
+/* ---------------------------------------------------------------- tokens -- */
+:root {
+  --navy-950: #101a3a;
+  --navy-900: #1a2a5e;
+  --navy-800: #23397a;
+  --navy-700: #3b57a3;
+
+  --gold-400: #f5a524;
+  --gold-300: #f8c65c;
+
+  --ink: #16202e;
+  --ink-2: #4f5b6b;
+  --ink-dark: #ffffff;
+  --ink-dark-2: #d5ddf0;
+
+  --paper: #fdfcf9;
+  --paper-2: #f4f3ee;
+  --surface: #ffffff;
+
+  --line: #e3e2dc;
+  --line-strong: #7d7666;
+  --line-dark: #3b57a3;
+
+  --error: #b42318;
+  --error-bg: #fdeceb;
+  --error-line: #e9b4ae;
+  --success: #146c43;
+  --success-bg: #eaf6ef;
+  --success-line: #a8d7bd;
+
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-pill: 999px;
+
+  --shadow: 0 1px 2px rgba(26, 42, 94, .06), 0 6px 18px rgba(26, 42, 94, .07);
+  --shadow-lift: 0 2px 4px rgba(26, 42, 94, .08), 0 14px 34px rgba(26, 42, 94, .12);
+
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Sora", "Helvetica Neue", Arial, sans-serif;
+
+  --shell-max: 1200px;
+  --shell-pad: clamp(16px, 4vw, 32px);
+  --slot-ratio: 4 / 3;
+  --call-bar-h: 60px;
+}
+
+/* ------------------------------------------------------------ base/reset -- */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+/* The [hidden] attribute must beat any class-level `display:` we set. JS uses
+   el.hidden for the nav glyphs, the call-bar Call link and the form status. */
+[hidden] { display: none !important; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.6;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Scroll lock while the mobile nav panel is open (JS toggles this class). */
+body.nav-open { overflow: hidden; }
+
+img,
+svg,
+picture { max-width: 100%; }
+
+img { height: auto; display: block; }
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  color: inherit;
+  margin: 0 0 .5em;
+  line-height: 1.15;
+  letter-spacing: -.015em;
+  text-wrap: balance;
+  font-weight: 700;
+}
+
+h1 { font-size: clamp(2rem, 5vw, 3.25rem); }
+h2 { font-size: clamp(1.6rem, 3vw, 2.25rem); }
+h3 { font-size: 1.25rem; font-weight: 600; line-height: 1.3; }
+h4 { font-size: 1.125rem; font-weight: 600; line-height: 1.35; }
+
+p { margin: 0 0 1em; }
+p:last-child { margin-bottom: 0; }
+
+ul, ol { margin: 0 0 1em; padding-left: 1.25em; }
+
+a {
+  color: inherit;
+  text-underline-offset: .18em;
+  text-decoration-thickness: 1px;
+  transition: color .15s ease, background-color .15s ease, border-color .15s ease;
+}
+
+strong, b { font-weight: 600; }
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--line);
+  margin: 2rem 0;
+}
+
+button, input, select, textarea {
+  font: inherit;
+  color: inherit;
+}
+
+/* Focus: 3px gold ring at offset 2. Gold on a light ground is only ~1.9:1, so
+   a navy halo rides underneath it — the composite indicator clears 3:1 on both
+   light and dark grounds. */
+:focus-visible {
+  outline: 3px solid var(--gold-400);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px rgba(26, 42, 94, .45);
+  border-radius: 4px;
+}
+
+.mw-section--dark :focus-visible,
+.mw-hero :focus-visible,
+.mw-footer :focus-visible,
+.mw-photo-slot :focus-visible {
+  box-shadow: 0 0 0 5px rgba(251, 248, 242, .30);
+}
+
+::selection {
+  background: var(--gold-300);
+  color: var(--ink);
+}
+
+/* --------------------------------------------------------------- utility -- */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.mw-skip-link {
+  position: absolute;
+  top: -100px;
+  left: var(--shell-pad);
+  z-index: 200;
+  display: inline-block;
+  padding: 12px 20px;
+  background: var(--gold-400);
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 1rem;
+  text-decoration: none;
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  box-shadow: var(--shadow-lift);
+}
+
+.mw-skip-link:focus,
+.mw-skip-link:focus-visible {
+  top: 0;
+}
+
+.mw-shell {
+  width: 100%;
+  max-width: var(--shell-max);
+  margin-inline: auto;
+  padding-inline: var(--shell-pad);
+}
+
+.mw-icon {
+  display: inline-block;
+  vertical-align: -0.15em;
+  color: currentColor;
+  fill: none;
+  stroke: currentColor;
+  flex-shrink: 0;
+  /* width/height come from the SVG's own attributes (build.py sets them). */
+}
+
+/* ---------------------------------------------------------------- header -- */
+.mw-header {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+}
+
+.mw-header__inner {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: clamp(16px, 2.5vw, 40px);
+  min-height: 76px;
+  padding-block: 12px;
+}
+
+/* Logo lockup — never shrinks, never wraps. */
+.mw-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  text-decoration: none;
+  color: var(--ink);
+  line-height: 1.1;
+}
+
+.mw-logo__mark {
+  display: block;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+}
+
+.mw-logo__text {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.1875rem;
+  letter-spacing: -.02em;
+  white-space: nowrap;
+}
+
+/* Desktop nav. Pushed right by margin-left:auto so the CTA can sit flush. */
+.mw-nav {
+  margin-left: auto;
+  min-width: 0;
+}
+
+.mw-nav__list {
+  display: flex;
+  align-items: center;
+  gap: clamp(4px, 1.4vw, 22px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mw-nav__link {
+  display: inline-block;
+  white-space: nowrap;          /* the v1 nav-wrap bug: never wrap a nav link */
+  padding: 8px 6px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--ink-2);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+}
+
+.mw-nav__link:hover {
+  color: var(--ink);
+  border-bottom-color: var(--gold-400);
+}
+
+.mw-nav__link.is-current {
+  color: var(--ink);
+  font-weight: 600;
+  border-bottom-color: var(--gold-400);
+}
+
+.mw-header__cta {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* Hamburger — hidden on desktop, 44px target on mobile. */
+.mw-nav-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin-left: auto;
+  padding: 0;
+  background: transparent;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-sm);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.mw-nav-toggle:hover { border-color: var(--line-strong); }
+
+/* Glyph swap. The markup wraps each SVG in .mw-nav-toggle__icon--open/--close;
+   JS also sets [hidden] on them, and the global [hidden] rule wins over these. */
+.mw-nav-toggle__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.mw-nav-toggle__icon--close { display: none; }
+.mw-nav-toggle[aria-expanded="true"] .mw-nav-toggle__icon--open { display: none; }
+.mw-nav-toggle[aria-expanded="true"] .mw-nav-toggle__icon--close { display: inline-flex; }
+
+/* --------------------------------------------------------------- buttons -- */
+.mw-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 12px 24px;
+  border: 1.5px solid transparent;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.25;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color .15s ease, border-color .15s ease,
+              color .15s ease, transform .15s ease, box-shadow .15s ease;
+}
+
+.mw-btn--primary {
+  background: var(--gold-400);
+  border-color: var(--gold-400);
+  color: var(--ink);              /* 8.2:1 */
+  box-shadow: var(--shadow);
+}
+
+.mw-btn--primary:hover {
+  background: var(--gold-300);
+  border-color: var(--gold-300);
+  box-shadow: var(--shadow-lift);
+}
+
+.mw-btn--primary:active { transform: translateY(1px); }
+
+/* Ghost = 1.5px outline in the current text colour; works on light and dark. */
+.mw-btn--ghost {
+  background: transparent;
+  border-color: currentColor;
+  color: inherit;
+}
+
+.mw-btn--ghost:hover {
+  background: rgba(26, 42, 94, .06);
+}
+
+.mw-section--dark .mw-btn--ghost:hover,
+.mw-hero .mw-btn--ghost:hover,
+.mw-footer .mw-btn--ghost:hover {
+  background: rgba(255, 255, 255, .10);
+}
+
+.mw-btn--dark {
+  background: var(--navy-900);
+  border-color: var(--navy-900);
+  color: var(--ink-dark);
+}
+
+.mw-btn--dark:hover {
+  background: var(--navy-800);
+  border-color: var(--navy-800);
+}
+
+.mw-btn[disabled],
+.mw-btn[aria-disabled="true"] {
+  opacity: .6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ------------------------------------------------------------------ hero -- */
+.mw-hero {
+  background: var(--navy-900);
+  color: var(--ink-dark);
+  border-bottom: 1px solid var(--navy-700);
+}
+
+.mw-hero__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr);
+  gap: clamp(28px, 5vw, 64px);
+  align-items: center;
+  padding-block: clamp(48px, 7vw, 92px);
+}
+
+.mw-hero__copy { min-width: 0; }
+
+.mw-hero__copy h1 { color: var(--ink-dark); }
+
+.mw-hero__copy .mw-lede { color: var(--ink-dark-2); }
+
+.mw-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.mw-hero__media { min-width: 0; }
+
+/* --------------------------------------------------------------- section -- */
+.mw-section {
+  padding-block: clamp(48px, 6vw, 88px);
+}
+
+.mw-section--tint { background: var(--paper-2); }
+
+.mw-section--dark {
+  background: var(--navy-900);
+  color: var(--ink-dark);
+}
+
+.mw-section--dark h2,
+.mw-section--dark h3 { color: var(--ink-dark); }
+
+.mw-section--dark .mw-lede { color: var(--ink-dark-2); }
+
+.mw-eyebrow {
+  display: block;
+  margin: 0 0 12px;
+  font-family: var(--font-body);
+  font-size: 0.8125rem;            /* 13px — the smallest type in the system */
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: .08em;
+  text-transform: uppercase;       /* the ONLY uppercase in the system */
+  color: var(--ink-2);
+}
+
+.mw-section--dark .mw-eyebrow,
+.mw-hero .mw-eyebrow,
+.mw-footer .mw-eyebrow { color: var(--gold-300); }
+
+.mw-lede {
+  max-width: 62ch;
+  margin: 0 0 1em;
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+
+.mw-grid {
+  display: grid;
+  gap: clamp(16px, 2.2vw, 28px);
+  margin-top: 36px;
+}
+
+.mw-grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.mw-grid--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+/* ----------------------------------------------------------------- cards -- */
+.mw-card {
+  display: flex;
+  flex-direction: column;
+  padding: clamp(20px, 2.4vw, 28px);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.mw-section--dark .mw-card {
+  background: var(--navy-800);
+  border-color: var(--navy-700);
+  box-shadow: none;
+  color: var(--ink-dark);
+}
+
+.mw-card__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  margin-bottom: 18px;
+  border-radius: var(--radius-pill);
+  background: rgba(231, 174, 55, .18);   /* warm gold tint */
+  color: var(--navy-900);                /* navy icon on light */
+  flex-shrink: 0;
+}
+
+.mw-section--dark .mw-card__icon,
+.mw-hero .mw-card__icon {
+  background: var(--navy-800);
+  border: 1px solid rgba(231, 174, 55, .30);
+  color: var(--gold-400);                /* gold-400 icon on navy-800: 6.9:1 */
+}
+
+.mw-card__title {
+  margin: 0 0 8px;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.mw-card__body {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+
+.mw-section--dark .mw-card__body { color: var(--ink-dark-2); }
+
+/* ----------------------------------------------------------------- steps -- */
+.mw-steps {
+  display: grid;
+  gap: clamp(20px, 2.6vw, 32px);
+  margin: 36px 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: mw-step;
+}
+
+.mw-step {
+  position: relative;
+  padding-left: 68px;
+  counter-increment: mw-step;
+}
+
+.mw-step::before {
+  content: counter(mw-step);
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-pill);
+  background: var(--navy-900);
+  color: var(--gold-400);
+  font-family: var(--font-body);      /* numerals in the body face, never serif */
+  font-size: 1.125rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.mw-section--dark .mw-step::before {
+  background: var(--gold-400);
+  color: var(--ink);
+}
+
+.mw-step h3 { margin-bottom: 6px; }
+
+.mw-step p {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: 1rem;
+}
+
+.mw-section--dark .mw-step p { color: var(--ink-dark-2); }
+
+/* ----------------------------------------------------------- photo slots -- */
+/* A designed dark panel, not a broken image: navy-800 ground, shingle courses
+   every 28px with alternating band tone, staggered tab joints, gold top rule. */
+.mw-photo-slot {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  overflow: hidden;
+  aspect-ratio: var(--slot-ratio, 4 / 3);
+  padding: clamp(20px, 3vw, 36px);
+  border-radius: var(--radius);
+  border-top: 2px solid var(--gold-400);
+  background-color: var(--navy-800);
+  background-image:
+    /* shingle courses: 28px apart, alternating band tone, each course closed
+       by a dark butt-edge shadow and opened by a thin light reveal */
+    repeating-linear-gradient(
+      180deg,
+      rgba(255, 255, 255, .028) 0 25px,
+      rgba(0, 0, 0, .30) 25px 27px,
+      rgba(255, 255, 255, .055) 27px 28px,
+      rgba(0, 0, 0, .075) 28px 53px,
+      rgba(0, 0, 0, .32) 53px 55px,
+      rgba(255, 255, 255, .045) 55px 56px
+    );
+  text-align: center;
+  color: var(--ink-dark);
+}
+
+/* Staggered vertical tab joints: layer A on odd courses, layer B offset 45px
+   on even courses. Masked so the stagger reads as real shingle coursing. */
+.mw-photo-slot::before,
+.mw-photo-slot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, .16) 0 1px,
+    rgba(255, 255, 255, .028) 1px 2px,
+    transparent 2px 96px
+  );
+  background-size: 96px 56px;
+  background-repeat: repeat;
+}
+
+.mw-photo-slot::before {
+  background-position: 0 0;
+  -webkit-mask-image: repeating-linear-gradient(180deg, #000 0 24px, transparent 24px 56px);
+          mask-image: repeating-linear-gradient(180deg, #000 0 24px, transparent 24px 56px);
+}
+
+.mw-photo-slot::after {
+  background-position: 48px 28px;
+  -webkit-mask-image: repeating-linear-gradient(180deg, transparent 0 28px, #000 28px 52px, transparent 52px 56px);
+          mask-image: repeating-linear-gradient(180deg, transparent 0 28px, #000 28px 52px, transparent 52px 56px);
+}
+
+/* Copy sits above the texture on its own soft scrim so the label and the shot
+   description stay readable over the lighter courses. */
+.mw-photo-slot__label,
+.mw-photo-slot__shot {
+  position: relative;
+  z-index: 1;
+  max-width: 46ch;
+  padding-inline: 10px;
+  background: rgba(26, 42, 94, .72);
+  box-shadow: 0 0 14px 10px rgba(26, 42, 94, .72);
+  border-radius: 2px;
+}
+
+.mw-photo-slot__label {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 0.8125rem;              /* 13px */
+  font-weight: 600;
+  letter-spacing: .08em;
+  color: var(--gold-300);            /* 8.5:1 on navy-800 */
+}
+
+.mw-photo-slot__shot {
+  margin: 0;
+  font-size: 0.9375rem;              /* 15px */
+  line-height: 1.5;
+  font-weight: 500;
+  color: var(--ink-dark);            /* 13.9:1 on navy-800 */
+  text-shadow: 0 1px 8px rgba(10, 18, 35, .55);
+}
+
+/* ------------------------------------------------------------ trust band -- */
+.mw-trust-band {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(16px, 3vw, 40px);
+  padding-block: 22px;
+  border-block: 1px solid var(--line);
+  background: var(--paper-2);
+}
+
+.mw-trust-band__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(16px, 3vw, 40px);
+}
+
+.mw-trust-band__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--ink-2);
+}
+
+.mw-trust-band__item .mw-icon { color: var(--navy-900); }
+
+/* --------------------------------------------------------- contact block -- */
+.mw-contact-block {
+  display: grid;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mw-contact-block__item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  font-size: 1rem;
+  color: var(--ink-2);
+}
+
+.mw-contact-block__item .mw-icon {
+  margin-top: .2em;
+  color: var(--navy-900);
+}
+
+.mw-contact-block__item a { color: var(--ink); }
+
+.mw-contact-block__item a:hover { color: var(--navy-800); }
+
+.mw-section--dark .mw-contact-block__item,
+.mw-footer .mw-contact-block__item { color: var(--ink-dark-2); }
+
+.mw-section--dark .mw-contact-block__item .mw-icon,
+.mw-footer .mw-contact-block__item .mw-icon { color: var(--gold-400); }
+
+.mw-section--dark .mw-contact-block__item a,
+.mw-footer .mw-contact-block__item a { color: var(--ink-dark); }
+
+.mw-section--dark .mw-contact-block__item a:hover,
+.mw-footer .mw-contact-block__item a:hover { color: var(--gold-300); }
+
+/* ----------------------------------------------------------------- chips -- */
+.mw-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border: 1.5px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  font-size: 0.9375rem;              /* 15px */
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--navy-800);
+  text-decoration: none;
+}
+
+/* TBD chip: dashed, never a link, no underline. */
+.mw-chip--tbd {
+  border-style: dashed;
+  text-decoration: none;
+  cursor: default;
+}
+
+.mw-section--dark .mw-chip,
+.mw-hero .mw-chip,
+.mw-footer .mw-chip {
+  border-color: var(--gold-400);
+  color: var(--gold-300);
+}
+
+/* ------------------------------------------------------------------ form -- */
+.mw-form {
+  display: block;
+  padding: clamp(20px, 3vw, 32px);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.mw-section--dark .mw-form {
+  background: var(--navy-800);
+  border-color: var(--navy-700);
+  color: var(--ink-dark);
+}
+
+.mw-form__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.mw-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.mw-field--full { grid-column: 1 / -1; }
+
+.mw-field__label {
+  font-size: 0.9375rem;              /* 15px */
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--ink);
+}
+
+.mw-section--dark .mw-field__label { color: var(--ink-dark); }
+
+.mw-field__input {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  font-family: var(--font-body);
+  font-size: 16px;                   /* 16px exactly: stops iOS zoom-on-focus */
+  line-height: 1.4;
+  color: var(--ink);
+  background: #ffffff;
+  border: 1.5px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  appearance: none;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+textarea.mw-field__input {
+  min-height: 120px;
+  resize: vertical;
+}
+
+select.mw-field__input {
+  background-image: none;            /* icon is supplied by markup, not CSS */
+  cursor: pointer;
+}
+
+.mw-field__input::placeholder {
+  color: var(--ink-2);
+  opacity: 1;
+}
+
+.mw-field__input:hover { border-color: var(--ink-2); }
+
+.mw-field__input:focus,
+.mw-field__input:focus-visible {
+  outline: 3px solid var(--gold-400);
+  outline-offset: 2px;
+  border-color: var(--navy-800);
+  box-shadow: 0 0 0 5px rgba(26, 42, 94, .35);
+}
+
+.mw-field__hint {
+  font-size: 0.875rem;               /* 14px */
+  line-height: 1.45;
+  color: var(--ink-2);
+}
+
+.mw-section--dark .mw-field__hint { color: var(--ink-dark-2); }
+
+/* Error text is empty until JS fills it; :empty keeps the gap from opening. */
+.mw-field__error {
+  display: none;
+  font-size: 0.875rem;               /* 14px */
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--error);
+}
+
+.mw-field__error:not(:empty) { display: block; }
+
+.mw-section--dark .mw-field__error { color: #ffb4a9; }
+
+.mw-field.is-invalid .mw-field__input,
+.mw-field__input[aria-invalid="true"] {
+  border-color: var(--error);
+  background: var(--error-bg);
+}
+
+.mw-field.is-invalid .mw-field__input:focus {
+  border-color: var(--error);
+}
+
+/* Honeypot: off-screen for humans, still a real focusable field for bots.
+   Deliberately NOT display:none — some bots skip hidden inputs. */
+.mw-form__honeypot {
+  position: absolute !important;
+  left: -9999px !important;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+  padding: 0;
+  margin: -1px;
+}
+
+.mw-form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.mw-form__privacy {
+  margin: 14px 0 0;
+  font-size: 0.9375rem;              /* 15px */
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+.mw-section--dark .mw-form__privacy { color: var(--ink-dark-2); }
+
+/* ---------------------------------------------------------- form status -- */
+/* Lives INSIDE <form>. Hidden until JS sets data-state; success and error are
+   visually distinct panels (v1 showed the green box on failure). */
+.mw-form-status {
+  display: none;
+  margin-bottom: 20px;
+  padding: 16px 18px;
+  border: 1.5px solid transparent;
+  border-left-width: 5px;
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+.mw-form-status[data-state="success"],
+.mw-form-status[data-state="error"] { display: block; }
+
+.mw-form-status__success,
+.mw-form-status__error { display: none; }
+
+.mw-form-status[data-state="success"] {
+  background: var(--success-bg);
+  border-color: var(--success);
+  color: var(--ink);
+}
+
+.mw-form-status[data-state="success"] .mw-form-status__success { display: block; }
+
+.mw-form-status[data-state="error"] {
+  background: var(--error-bg);
+  border-color: var(--error);
+  color: var(--ink);
+}
+
+.mw-form-status[data-state="error"] .mw-form-status__error { display: block; }
+
+.mw-form-status h3 {
+  margin: 0 0 6px;
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.mw-form-status[data-state="success"] h3 { color: var(--success); }
+.mw-form-status[data-state="error"] h3 { color: var(--error); }
+
+.mw-form-status p { margin: 0 0 .5em; }
+.mw-form-status p:last-child { margin-bottom: 0; }
+
+.mw-form-status .mw-chip {
+  margin-top: 10px;
+  color: var(--navy-800);
+  border-color: var(--navy-700);
+}
+
+/* --------------------------------------------------- sticky call bar (m) -- */
+/* Hidden by default; only exists below 768px (see media block). */
+.mw-call-bar { display: none; }
+
+.mw-call-bar__call[hidden] { display: none !important; }
+
+/* ----------------------------------------------------------- breadcrumb -- */
+.mw-breadcrumb {
+  padding-block: 14px;
+  font-size: 0.9375rem;              /* 15px */
+  color: var(--ink-2);
+}
+
+.mw-breadcrumb ol {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mw-breadcrumb li {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mw-breadcrumb a { color: var(--ink-2); }
+.mw-breadcrumb a:hover { color: var(--ink); }
+
+.mw-breadcrumb [aria-current="page"] {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.mw-breadcrumb .mw-icon { color: var(--line-strong); }
+
+/* ---------------------------------------------------------------- footer -- */
+.mw-footer {
+  background: var(--navy-950);
+  color: var(--ink-dark-2);
+  padding-block: clamp(40px, 5vw, 64px) 28px;
+}
+
+.mw-footer a { color: var(--ink-dark); }
+.mw-footer a:hover { color: var(--gold-300); }
+
+.mw-footer h2,
+.mw-footer h3,
+.mw-footer h4 { color: var(--ink-dark); }
+
+.mw-footer__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) repeat(3, minmax(0, 1fr));
+  gap: clamp(24px, 3vw, 44px);
+}
+
+.mw-footer__cols {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mw-footer__cols li { margin-bottom: 10px; }
+
+.mw-footer__cols a { text-decoration: none; }
+.mw-footer__cols a:hover { text-decoration: underline; }
+
+/* Shares a box with .mw-shell in the markup, so the auto inline margin must be
+   preserved here or the legal line breaks out of the 1200px column. */
+.mw-footer__legal {
+  margin: 36px auto 0;
+  padding-top: 20px;
+  border-top: 1px solid var(--navy-700);
+  font-size: 0.875rem;               /* 14px — the smallest non-eyebrow type */
+  line-height: 1.55;
+  color: var(--ink-dark-2);          /* 12.4:1 on navy-950 */
+}
+
+/* ============================================================ breakpoints == */
+
+/* --- 1080 and below: tighten the nav rhythm before anything can wrap ------ */
+@media (max-width: 1080px) {
+  .mw-nav__list { gap: 4px; }
+  .mw-nav__link { padding-inline: 4px; font-size: 0.9375rem; }
+  .mw-header__inner { gap: 16px; }
+}
+
+/* --- below 900: nav collapses to the hamburger panel ---------------------- */
+@media (max-width: 899px) {
+  .mw-nav-toggle { display: inline-flex; }
+
+  .mw-nav {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    margin-left: 0;
+    padding: 84px var(--shell-pad) 32px;
+    background: var(--navy-900);
+    color: var(--ink-dark);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .mw-nav.is-open { display: block; }
+
+  .mw-nav__list {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+  }
+
+  .mw-nav__link {
+    display: block;
+    padding: 16px 4px;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--ink-dark);
+    border-bottom: 1px solid var(--navy-700);
+  }
+
+  .mw-nav__link:hover,
+  .mw-nav__link.is-current {
+    color: var(--gold-300);
+    border-bottom-color: var(--navy-700);
+  }
+
+  /* The toggle must stay clickable above the open panel. This works whether
+     .mw-nav is a child of .mw-header or a sibling of it. */
+  .mw-nav-toggle {
+    position: relative;
+    z-index: 100;
+    margin-left: 0;
+  }
+
+  body.nav-open .mw-header { z-index: 120; }
+
+  body.nav-open .mw-nav-toggle {
+    border-color: var(--gold-400);
+    color: var(--gold-400);
+    background: transparent;
+  }
+
+  /* The panel is out of flow, so the three remaining children (logo, CTA,
+     toggle) space out regardless of their source order. */
+  .mw-header__inner { justify-content: space-between; }
+
+  .mw-header__cta { margin-left: 0; }
+
+  .mw-hero__inner { grid-template-columns: minmax(0, 1fr); }
+
+  .mw-grid--3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  .mw-footer__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* --- below 768: sticky call bar ------------------------------------------ */
+@media (max-width: 767px) {
+  /* Two equal buttons pinned to the bottom, clear of the home indicator. */
+  /* Flex, not a 2-track grid: when PHONE_E164 is empty the build omits the Call
+     link entirely, and a fixed 2-column grid left an empty second cell. Flex
+     children at flex:1 fill the bar whether there are one or two of them. */
+  .mw-call-bar {
+    display: flex;
+    gap: 1px;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 80;
+    background: var(--navy-700);
+    border-top: 1px solid var(--navy-700);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .mw-call-bar__call,
+  .mw-call-bar__estimate {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: var(--call-bar-h);
+    padding: 10px 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.25;
+    text-align: center;
+    text-decoration: none;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .mw-call-bar__call {
+    background: var(--navy-900);
+    color: var(--ink-dark);          /* 16.2:1 */
+  }
+
+  .mw-call-bar__estimate {
+    background: var(--gold-400);
+    color: var(--ink);               /* 8.2:1 */
+  }
+
+  /* Keep the footer clear of the bar. */
+  body {
+    padding-bottom: calc(var(--call-bar-h) + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* The bar must never sit under the open nav panel. */
+  body.nav-open .mw-call-bar { display: none; }
+
+  .mw-grid--2,
+  .mw-grid--3 { grid-template-columns: minmax(0, 1fr); }
+
+  .mw-form__grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* --- below 640: single-column everything --------------------------------- */
+@media (max-width: 639px) {
+  .mw-header__inner { min-height: 68px; }
+
+  .mw-footer__grid { grid-template-columns: minmax(0, 1fr); }
+
+  .mw-hero__actions .mw-btn { width: 100%; }
+
+  .mw-step { padding-left: 60px; }
+
+  .mw-step::before { width: 42px; height: 42px; font-size: 1rem; }
+
+  .mw-trust-band,
+  .mw-trust-band__inner { gap: 14px 24px; }
+}
+
+/* --- below 480: the header CTA steps aside ------------------------------- */
+@media (max-width: 479px) {
+  /* At 375 the CTA would push the lockup or overflow the header. The sticky
+     call bar carries the identical action, so the header CTA is dropped. */
+  .mw-header__cta { display: none; }
+
+  .mw-logo__text { font-size: 1.0625rem; }
+  .mw-logo__mark { width: 34px; height: 34px; }
+
+  .mw-section { padding-block: 44px; }
+}
+
+/* ============================================================== a11y/etc == */
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media print {
+  .mw-nav-toggle,
+  .mw-nav,
+  .mw-call-bar,
+  .mw-skip-link,
+  .mw-header__cta { display: none !important; }
+
+  body {
+    background: #ffffff;
+    color: #000000;
+    padding-bottom: 0;
+    font-size: 12pt;
+  }
+
+  .mw-header { position: static; border-bottom: 1px solid #999999; }
+
+  .mw-hero,
+  .mw-section--dark,
+  .mw-footer {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  .mw-hero h1,
+  .mw-section--dark h2,
+  .mw-footer h3 { color: #000000 !important; }
+
+  .mw-photo-slot { display: none; }
+
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 10pt; }
+}
+
+/* ratio modifiers (inline style is blocked by the CSP) */
+.mw-photo-slot--4x3 { --slot-ratio: 4 / 3; }
+.mw-photo-slot--3x2 { --slot-ratio: 3 / 2; }
+
+/* ==================================== Reconcile: classes from page markup == */
+/* Every selector below is a class the built HTML uses that had no rule. Values
+   follow the same token system; every text/ground pair here was checked with
+   the maths in tools/contrast_check.py (worst case --ink-2 on --paper-2 =
+   6.22:1). Nothing here drops below 14px. */
+
+/* --- areas list (roof-replacement "Where we work"): inline chips ---------- */
+.mw-areas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 24px 0 20px;
+  padding: 0;
+  list-style: none;
+}
+
+.mw-areas li {
+  padding: 7px 15px;
+  border: 1.5px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  font-size: 1rem;                    /* 16px */
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--navy-800);             /* 9.4:1 on --surface */
+}
+
+.mw-section--tint .mw-areas li { background: transparent; }
+
+.mw-section--dark .mw-areas li {
+  background: transparent;
+  border-color: var(--gold-400);
+  color: var(--gold-300);             /* 8.9:1 on --navy-900 */
+}
+
+/* --- breadcrumb list ------------------------------------------------------ */
+/* Same box as `.mw-breadcrumb ol`; the separator is drawn in CSS because the
+   markup ships plain <li>s with no chevron SVG between them. */
+.mw-breadcrumb__list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.9375rem;               /* 15px */
+}
+
+.mw-breadcrumb__list li {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+/* Chevron between items: a 6px rotated corner, decorative only. */
+.mw-breadcrumb__list li + li::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  flex-shrink: 0;
+  border-top: 1.5px solid var(--line-strong);
+  border-right: 1.5px solid var(--line-strong);
+  transform: rotate(45deg);
+}
+
+.mw-breadcrumb__list a { color: var(--ink-2); }        /* 6.7:1 on --paper */
+.mw-breadcrumb__list a:hover { color: var(--ink); }
+.mw-breadcrumb__list [aria-current="page"] { color: var(--ink); font-weight: 600; }
+
+/* --- contact block: definition-style rows --------------------------------- */
+.mw-contact-block__list {
+  display: grid;
+  gap: 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mw-contact-block__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;                /* 14px */
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--ink-2);                /* 6.7:1 on --paper, 6.2:1 on --paper-2 */
+}
+
+.mw-contact-block__label .mw-icon { margin-top: 0; color: var(--navy-900); }
+
+.mw-contact-block__value {
+  font-size: 1.0625rem;               /* 17px */
+  line-height: 1.5;
+  color: var(--ink);                  /* 14.8:1 on --paper-2 */
+}
+
+/* Chips (email / TBD phone) sit inline in the value row. */
+.mw-contact-block__item .mw-chip { align-self: flex-start; }
+
+.mw-section--dark .mw-contact-block__label,
+.mw-footer .mw-contact-block__label { color: var(--ink-dark-2); }
+
+.mw-section--dark .mw-contact-block__label .mw-icon,
+.mw-footer .mw-contact-block__label .mw-icon { color: var(--gold-400); }
+
+.mw-section--dark .mw-contact-block__value,
+.mw-footer .mw-contact-block__value { color: var(--ink-dark); }
+
+/* --- footer columns ------------------------------------------------------- */
+.mw-footer__brand {
+  margin: 0 0 10px;
+  font-family: var(--font-display);
+  font-size: 1.125rem;                /* 18px */
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--ink-dark);             /* 17.1:1 on --navy-950 */
+}
+
+.mw-footer__blurb {
+  margin: 0;
+  max-width: 44ch;
+  font-size: 1rem;                    /* 16px */
+  line-height: 1.6;
+  color: var(--ink-dark-2);           /* 12.5:1 on --navy-950 */
+}
+
+/* The markup uses <h2> here; without this it would take the H2 clamp. */
+.mw-footer__heading {
+  margin: 0 0 12px;
+  font-family: var(--font-display);
+  font-size: 1rem;                    /* 16px */
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: 0;
+  color: var(--ink-dark);
+}
+
+.mw-footer__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--ink-dark-2);
+}
+
+.mw-footer__list li { margin-bottom: 10px; }
+.mw-footer__list li:last-child { margin-bottom: 0; }
+
+.mw-footer__list a { color: var(--ink-dark); text-decoration: none; }
+
+.mw-footer__list a:hover {
+  color: var(--gold-300);             /* 10.7:1 on --navy-950 */
+  text-decoration: underline;
+}
+
+/* --- form status panel: heading + body ------------------------------------ */
+.mw-form-status__heading {
+  margin: 0 0 6px;
+  font-family: var(--font-display);
+  font-size: 1.25rem;                 /* 20px */
+  font-weight: 700;
+  line-height: 1.3;
+  color: inherit;
+}
+
+.mw-form-status[data-state="success"] .mw-form-status__heading {
+  color: var(--success);              /* 5.8:1 on --success-bg */
+}
+
+.mw-form-status[data-state="error"] .mw-form-status__heading {
+  color: var(--error);                /* 5.8:1 on --error-bg */
+}
+
+.mw-form-status__body {
+  margin: 0;
+  font-size: 1rem;                    /* 16px */
+  line-height: 1.55;
+  color: var(--ink);                  /* 14.8 / 14.4:1 on the two panel grounds */
+}
+
+.mw-form-status__body .mw-chip { margin-top: 6px; }
+
+/* --- form heading (sits above <form>, not inside it) ---------------------- */
+.mw-form__heading {
+  margin: 0 0 16px;
+  font-family: var(--font-display);
+  font-size: 1.5rem;                  /* 24px */
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -.015em;
+}
+
+/* --- checkmark list ------------------------------------------------------- */
+/* The markup ships plain <li>s with no icon, so the marker is a gold square
+   drawn in CSS. Decorative only — the list semantics live in <ul>/<li>. */
+.mw-list {
+  margin: 20px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.mw-list li {
+  position: relative;
+  padding-left: 26px;
+  font-size: 1.0625rem;               /* 17px */
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.mw-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: .58em;
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  background: var(--gold-400);
+}
+
+/* If a build ever puts the check icon inside the item, the square steps back. */
+.mw-list li:has(> .mw-icon) { padding-left: 0; display: flex; gap: 10px; }
+.mw-list li:has(> .mw-icon)::before { content: none; }
+.mw-list > li > .mw-icon { margin-top: .22em; color: var(--gold-400); }
+
+.mw-section--dark .mw-list li { color: var(--ink-dark); }
+
+/* --- quiet callout note --------------------------------------------------- */
+.mw-note {
+  margin: 24px 0 0;
+  padding: 14px 16px;
+  background: var(--paper-2);
+  border-left: 1.5px solid var(--gold-400);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: 1rem;                    /* 16px */
+  line-height: 1.6;
+  color: var(--ink-2);                /* 6.2:1 on --paper-2 */
+}
+
+.mw-section--tint .mw-note { background: var(--surface); }
+
+.mw-section--dark .mw-note,
+.mw-footer .mw-note {
+  background: rgba(255, 255, 255, .06);
+  border-left-color: var(--gold-400);
+  color: var(--ink-dark-2);
+}
+
+/* --- gated warranty well (CertainTeed SureStart PLUS block) --------------- */
+.mw-warranty {
+  margin: 28px 0 0;
+  padding: clamp(20px, 2.4vw, 28px);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--gold-400);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.mw-warranty > p { color: var(--ink-2); }
+
+/* --- centred actions row under a section ---------------------------------- */
+.mw-section__cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 36px 0 0;
+}
+
+/* --- step title + body ---------------------------------------------------- */
+.mw-step__title {
+  margin: 0 0 6px;
+  font-family: var(--font-display);
+  font-size: 1.125rem;                /* 18px */
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--ink);
+}
+
+.mw-step__body {
+  margin: 0;
+  max-width: 70ch;                    /* the steps grid is full-bleed; cap measure */
+  font-size: 1rem;                    /* 16px */
+  line-height: 1.6;
+  color: var(--ink-2);                /* 6.7:1 on --paper, 6.2:1 on --paper-2 */
+}
+
+.mw-section--dark .mw-step__title { color: var(--ink-dark); }
+.mw-section--dark .mw-step__body { color: var(--ink-dark-2); }   /* 8.6:1 */
+
+@media (max-width: 479px) {
+  .mw-section__cta .mw-btn { width: 100%; }
+}
+
+/* Narrow phones: a hard 4/3 or 3/2 box clips the shot description (overflow is
+   hidden so the texture can't leak). Below 640 the slot keeps its texture but
+   lets the caption set the height. */
+@media (max-width: 639px) {
+  .mw-photo-slot {
+    aspect-ratio: auto;
+    min-height: 62vw;
+  }
+}
+
+/* ============================ Reconcile 2: topbar + two-line logo lockup == */
+/* Added after worker A introduced .mw-topbar above the header and split the
+   logo text into a name + tagline. Text pairs: --ink-dark-2 on --navy-900 =
+   10.0:1, --gold-300 on --navy-900 = 8.6:1, --ink-2 on --paper = 6.7:1. */
+
+.mw-topbar {
+  background: var(--navy-900);
+  color: var(--ink-dark-2);
+  border-bottom: 1px solid var(--navy-700);
+}
+
+.mw-topbar__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 24px;
+  padding-block: 9px;
+  font-size: 0.875rem;                /* 14px */
+  line-height: 1.45;
+}
+
+.mw-topbar__area-text { color: var(--ink-dark-2); }
+
+.mw-topbar__contact {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 18px;
+}
+
+/* NOTE (w0-hero-merge, 2026-09-06): hero.css has been folded into this sheet
+   (see the merged block at the end) and deleted. The rules that hero.css fully
+   superseded property-for-property (.mw-topbar__area, .mw-topbar__link and its
+   hover/icon, .mw-topbar .mw-chip, .mw-logo__text/__name/__tag) were removed
+   here. What remains above is only what the merged block does NOT restate:
+   .mw-topbar's border-bottom, .mw-topbar__inner's flex-wrap/font-size/
+   line-height, .mw-topbar__contact's flex-wrap, and .mw-topbar__area-text's
+   colour. The merged block appears later, so it still wins on everything it
+   does declare.
+   hero.css's own header comment quoted --ink-dark on --navy-900 as 12.3:1 and
+   --ink-dark-2 on --navy-900 as 9.6:1; tools/contrast_check.py computes
+   13.67:1 and 10.04:1 for the current tokens. Both pass AA; the quoted figures
+   were stale and are corrected in the merged header. */
+
+/* == Fix from browser test (J): logo buried under open mobile nav == */
+@media (max-width: 899px) {
+  body.nav-open .mw-logo { position: relative; z-index: 100; }
+  body.nav-open .mw-logo__text, body.nav-open .mw-logo__name { color: var(--ink-dark); }
+}
+
+/* == w0-infra == */
+/* Footer gained a 5th column (Locations); the base grid declares 1.2fr + 3.
+   Only the >=900px layout needs the extra track — 899/639 already collapse to
+   2 and 1 columns, and those rules live earlier in this file. */
+@media (min-width: 900px) {
+  .mw-footer__grid {
+    grid-template-columns: minmax(0, 1.2fr) repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Primary nav went from 4 links to 7 in one 1200px shell (--shell-max is fixed,
+   so the desktop nav has no more room at 1920 than at 1280). Tighten the gap and
+   type a step so the row still fits beside the logo and the header CTA without
+   wrapping. Starts at 1081px so the existing <=1080px rule keeps its 4px gap. */
+@media (min-width: 1081px) {
+  .mw-nav__list { gap: 10px; }
+  .mw-nav__link { padding-inline: 4px; font-size: 0.9375rem; }
+}
+
+
+/* == home hero / topbar / lockup (merged from hero.css) == */
+/* Merged verbatim by worker w0-hero-merge (2026-09-06) from the former
+   assets/css/hero.css, which used to load AFTER this sheet. It keeps that
+   position — last in the file — so it remains the authority on .mw-topbar,
+   .mw-logo__* and the home hero. Only the file header changed: hero.css's
+   original contrast table quoted --ink-dark on --navy-900 as 12.3:1 and
+   --ink-dark-2 on --navy-900 as 9.6:1; tools/contrast_check.py computes
+   13.67:1 and 10.04:1 for the current tokens, so the corrected table is:
+     --gold-400 #f5a524 on --navy-900 #1a2a5e ............ 6.7:1
+     --ink-dark #ffffff on --navy-900 .................... 13.67:1
+     --ink-dark-2 #d5ddf0 on --navy-900 .................. 10.04:1
+     --ink-dark-2 #d5ddf0 on --navy-950 #101a3a .......... 12.4:1
+     --gold-300 #f8c65c on --navy-950 .................... 10.6:1
+     --ink #16202e on #ffffff (form card) ................ 15.9:1
+     --ink-2 #4f5b6b on #ffffff .......................... 7.2:1 */
+
+/* ============================================================== topbar === */
+/* Utility strip above the sticky header: it scrolls away, the header sticks.
+   One line on desktop, gone below 768 where the sticky call bar takes over. */
+
+.mw-topbar {
+  background: var(--navy-950);
+  color: var(--ink-dark-2);
+  font-size: 0.875rem;               /* 14px */
+  line-height: 1.4;
+}
+
+.mw-topbar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 40px;
+  padding-block: 8px;
+}
+
+.mw-topbar__area {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  margin: 0;
+  color: var(--ink-dark-2);
+}
+
+.mw-topbar__area-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mw-topbar__area .mw-icon { color: var(--gold-400); }
+
+.mw-topbar__contact {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+.mw-topbar__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink-dark-2);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.mw-topbar__link .mw-icon { color: var(--gold-400); }
+
+.mw-topbar__link:hover {
+  color: var(--ink-dark);
+  text-decoration: underline;
+}
+
+/* The base .mw-chip is tuned for light grounds; on navy-950 it needs the same
+   treatment .mw-hero .mw-chip gets, one size down to sit inside a 40px bar. */
+.mw-topbar .mw-chip {
+  padding: 3px 12px;
+  font-size: 0.875rem;               /* 14px */
+  border-color: var(--gold-400);
+  color: var(--gold-300);
+  white-space: nowrap;
+}
+
+
+/* ======================================================== logo lockup === */
+/* Mark + two-line wordmark. .mw-logo already has flex-shrink:0 in site.css,
+   so the taller lockup cannot squeeze the nav at 1280–1920. */
+
+.mw-logo__text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1px;
+  /* site.css sets font-size on this element; the children set their own. */
+  font-size: 1rem;
+  letter-spacing: normal;
+}
+
+.mw-logo__name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.25rem;                /* 20px */
+  line-height: 1.15;
+  letter-spacing: -.02em;
+  white-space: nowrap;
+  color: var(--ink);
+}
+
+.mw-logo__tag {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.875rem;               /* 14px — sentence case, NOT transformed */
+  line-height: 1.25;
+  letter-spacing: .04em;
+  white-space: nowrap;
+  color: var(--ink-2);               /* 7.2:1 on --paper */
+}
+
+
+/* ========================================================== home hero === */
+
+.mw-hero--home {
+  /* Depth, not decoration: one soft glow up and left of the H1, resolving to a
+     slightly deeper navy at the bottom-right so the white card has something
+     to sit against. Three stops only — more banded on 8-bit panels. */
+  background:
+    radial-gradient(120% 90% at 20% 10%, #24397c 0%, var(--navy-900) 55%, #14224f 100%);
+}
+
+.mw-hero--home .mw-hero__inner {
+  /* 1.25 : 1 is the narrowest split that still lets the 800-weight H1 hold
+     "matched to your home." on ONE line at every width down to 900px, which is
+     the whole point of the two-tone treatment. Measured, not guessed. */
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  /* stretch, not start: the copy column below is a flex column whose rule has
+     margin-top:auto, so the copy TOPS align with the card top AND the proof
+     row bottom-aligns with the card bottom. Two anchors instead of one. */
+  align-items: stretch;
+  gap: clamp(28px, 3.6vw, 52px);
+  padding-block: clamp(40px, 5.5vw, 76px);
+}
+
+/* -- eyebrow pill --------------------------------------------------------- */
+.mw-hero__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 24px;
+  padding: 7px 16px 7px 14px;
+  border: 1px solid rgba(245, 165, 36, .38);
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, .07);
+  font-family: var(--font-body);
+  font-size: 0.9375rem;              /* 15px */
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: .01em;
+  color: var(--ink-dark-2);
+}
+
+.mw-hero__pill-dot {
+  display: block;
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--gold-400);
+}
+
+/* -- two-tone H1 ---------------------------------------------------------- */
+.mw-hero--home .mw-hero__title {
+  margin: 0 0 22px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  /* Sora 800 at font-size F needs ~11.7F to set "matched to your home." on one
+     line (letter-spacing included). The copy column is ~0.556 of the shell, so
+     4vw keeps ~5% headroom from 900px up and 3.125rem caps it at 1200+. */
+  font-size: clamp(2.25rem, 4vw, 3.125rem);
+  line-height: 1.05;
+  letter-spacing: -.01em;
+  color: var(--ink-dark);
+  text-wrap: initial;                /* the two spans are the line breaks */
+}
+
+.mw-hero__line { display: block; }
+
+/* Flat gold, no gradient text (BUILD-SPEC §0). 6.7:1 on --navy-900. */
+.mw-hero__line--accent { color: var(--gold-400); }
+
+.mw-hero--home .mw-lede {
+  max-width: 46ch;
+  margin: 0;
+  font-size: 1.125rem;
+  color: var(--ink-dark-2);
+}
+
+.mw-hero--home .mw-hero__copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.mw-hero--home .mw-hero__actions { margin-top: 30px; }
+
+/* -- rule ----------------------------------------------------------------- */
+.mw-hero__rule {
+  width: 100%;
+  height: 0;
+  /* The form card is inevitably taller than the copy. Rather than leave that
+     difference as one hollow block under the copy, the leftover is split by a
+     pair of auto margins (here and on .mw-proof): half opens above the rule,
+     half sits below the proof row. Copy top still aligns with the card top. */
+  margin: auto 0 28px;
+  min-height: 0;
+  border: 0;
+  border-top: 1px solid rgba(255, 255, 255, .16);
+}
+
+/* -- proof row ------------------------------------------------------------ */
+.mw-proof {
+  width: 100%;
+  /* paired with .mw-hero__rule's auto top margin — see the note there. */
+  margin-bottom: auto;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px 24px;
+  margin-top: 0;
+  margin-inline: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mw-proof__item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.mw-proof__title {
+  font-family: var(--font-display);
+  font-size: 1.125rem;               /* 18px */
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -.01em;
+  color: var(--gold-400);
+}
+
+.mw-proof__body {
+  font-family: var(--font-body);
+  font-size: 0.9375rem;              /* 15px */
+  font-weight: 400;
+  line-height: 1.45;
+  color: var(--ink-dark-2);
+}
+
+
+/* ======================================================== the form card === */
+
+.mw-hero__card { min-width: 0; }
+
+.mw-form-card {
+  padding: 28px;
+  background: #ffffff;
+  border: 1px solid rgba(255, 255, 255, .5);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lift);
+  color: var(--ink);
+}
+
+.mw-form-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.mw-form-card__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.5rem;                 /* 24px */
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -.015em;
+  color: var(--navy-900);            /* 12.3:1 on white */
+}
+
+/* Neutral, not gold: the gold is spent on the submit button below it. */
+.mw-form-card__tag {
+  flex-shrink: 0;
+  padding: 4px 11px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--paper-2);
+  font-family: var(--font-body);
+  font-size: 0.8125rem;              /* 13px — floor of the type scale */
+  font-weight: 600;
+  line-height: 1.35;
+  white-space: nowrap;
+  color: var(--ink-2);               /* 6.6:1 on --paper-2 */
+}
+
+.mw-form-card__note {
+  margin: 0 0 20px;
+  font-size: 0.9375rem;              /* 15px */
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+/* The shared form partial carries its own card chrome (padding, ground,
+   border, shadow). Inside .mw-form-card that would read as a card in a card,
+   so it is flattened here — the inputs keep every site.css style. */
+.mw-form-card .mw-form {
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.mw-form-card .mw-form__grid { gap: 14px; }
+
+/* rows="4" is right for the full-width page form, too tall inside the hero. */
+.mw-form-card .mw-form__grid textarea.mw-field__input {
+  min-height: 68px;
+  height: 68px;
+}
+
+.mw-form-card .mw-form__actions { margin-top: 16px; }
+
+.mw-form-card .mw-form__actions .mw-btn { width: 100%; }
+
+
+/* ============================================================ responsive == */
+
+/* Below 1080 site.css already tightens the nav; the lockup tagline is the next
+   thing to give, so it goes before any nav link can wrap. */
+@media (max-width: 1160px) {
+  .mw-logo__tag { font-size: 0.8125rem; letter-spacing: .02em; }
+}
+
+@media (max-width: 1020px) {
+  .mw-logo__tag { display: none; }
+}
+
+/* Below 900 the hero collapses to one column (site.css), so the card stacks
+   under the copy and the H1 gets the full shell width. */
+@media (max-width: 899px) {
+  .mw-hero--home .mw-hero__inner { grid-template-columns: minmax(0, 1fr); }
+
+  .mw-hero__rule { margin-top: 34px; }
+
+  .mw-logo__tag { display: block; }   /* nav is a hamburger again: room returns */
+
+  /* Full shell width now, so the H1 can grow again and still hold two lines. */
+  .mw-hero--home .mw-hero__title { font-size: clamp(2.25rem, 6vw, 3.25rem); }
+
+  .mw-hero--home .mw-lede { max-width: 62ch; }
+
+  .mw-hero--home .mw-hero__inner { gap: 36px; }
+}
+
+/* Below 768 the utility bar collapses; its email and phone live in the footer
+   and on the contact page, and the sticky call bar carries the action. */
+@media (max-width: 767px) {
+  .mw-topbar { display: none; }
+
+  .mw-proof { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 639px) {
+  /* 7.5vw is the largest that keeps both lines unbroken at 320-639. */
+  .mw-hero--home .mw-hero__title { font-size: clamp(1.75rem, 7.5vw, 2.375rem); }
+
+  .mw-hero__rule { margin: 26px 0 22px; }   /* single column: no card to match */
+
+  /* Single column: three proof lines read as a short list, not a squeezed grid. */
+  .mw-proof { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+
+  .mw-form-card { padding: 22px 18px; }
+
+  .mw-form-card__head { flex-wrap: wrap; }
+}
+
+@media (max-width: 479px) {
+  /* site.css drops the header CTA here; the lockup keeps both lines but the
+     tagline steps down so the header stays on one line at 320–479. */
+  .mw-logo__name { font-size: 1.0625rem; }
+
+  .mw-logo__tag {
+    font-size: 0.8125rem;
+    letter-spacing: .01em;
+    white-space: normal;
+  }
+
+  .mw-hero__pill { font-size: 0.875rem; padding: 6px 13px 6px 11px; }
+
+  .mw-form-card__title { font-size: 1.3125rem; }
+}
+
+
+/* ==================================================== interior hero: single */
+/* about.html, financing.html and privacy.html use the interior hero but have
+   no right-hand column, which left the 1.05fr/.95fr grid with an empty cell
+   and the copy squeezed into the left half. This modifier collapses the hero
+   to one track and caps the measure so the H1 and lede read at a sane length
+   instead of stretching the full shell. */
+.mw-hero--single .mw-hero__inner {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.mw-hero--single .mw-hero__copy {
+  max-width: 720px;
+}
+
+.mw-hero--single .mw-lede { max-width: 62ch; }
+
+/* ============================== fix: logo lockup overran the mobile header == */
+/* Found by w0-hero-merge in the browser at 375: .mw-logo is flex-shrink:0 (so
+   the lockup cannot squeeze the nav at 1280-1920) and .mw-logo__name/__tag are
+   nowrap, so on a phone the lockup took 323px of a 375px header and pushed the
+   hamburger to x=382 — 7px of horizontal scroll on EVERY page, home included.
+   Below 900 the nav is a hamburger, so there is no nav left to protect: let the
+   lockup shrink and the tagline wrap there. Deliberately scoped to <=899 so the
+   1280-1920 nav-wrap guarantee above is untouched.
+   Measured after: scrollWidth == clientWidth at 320 / 375 / 768 / 899, header
+   band unchanged at 76px (77px at 375, where the tagline takes a second line). */
+@media (max-width: 899px) {
+  .mw-logo { flex-shrink: 1; min-width: 0; }
+  .mw-logo__text { min-width: 0; }
+  .mw-logo__tag { white-space: normal; }
+}
+
+/* == lead fix 2026-09-06: 44px tap target for the hamburger at 375 (was 27px, squeezed by the lockup) == */
+.mw-nav-toggle { flex-shrink: 0; min-width: 44px; }
+
+/* ============================================================================
+   2026-09-08 — four-trade build (deliverable 2)
+
+   Appended last on purpose. Everything here is a NEW selector except the
+   footer grid ladder, which replaces the w0-infra 5-column rule above because
+   the footer gained a sixth column (Roofing). Nothing here touches .mw-topbar,
+   .mw-logo__* or the home hero rules the block above is the authority on.
+   ========================================================================== */
+
+/* --- footer: six columns. Three across from 900 (a 900px shell cannot hold
+   six readable columns beside a 1200px max), six from 1180 where it can. The
+   <=899 (2 col) and <=639 (1 col) rules earlier in this file still govern. --- */
+@media (min-width: 900px) {
+  .mw-footer__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (min-width: 1180px) {
+  .mw-footer__grid {
+    grid-template-columns: minmax(0, 1.25fr) repeat(5, minmax(0, 1fr));
+  }
+}
+
+/* --- the mobile panel's own CTA row. The header's .mw-header__cta is outside
+   the panel, so the 8-link overlay needed the button inside it too. --- */
+.mw-nav__mobile-cta { display: none; }
+
+@media (max-width: 899px) {
+  .mw-nav__mobile-cta {
+    display: block;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--navy-700);
+  }
+  .mw-nav__mobile-cta .mw-btn { width: 100%; }
+}
+
+/* --- home hero: the four-trade strip under the lede ------------------------ */
+.mw-hero__trades {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 24px;
+  padding: 0;
+  list-style: none;
+}
+
+.mw-hero__trades a {
+  display: inline-block;
+  padding: 7px 15px;
+  border: 1px solid rgba(245, 165, 36, .38);
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, .07);
+  font-family: var(--font-body);
+  font-size: 0.9375rem;              /* 15px */
+  font-weight: 500;
+  color: var(--ink-dark);            /* 13.67:1 on navy-900 */
+  text-decoration: none;
+}
+
+.mw-hero__trades a:hover,
+.mw-hero__trades a:focus-visible {
+  border-color: var(--gold-400);
+  color: var(--gold-300);            /* 10.6:1 on navy-900 */
+}
+
+/* --- in-page anchor strip (/repairs/ four-trade jumps, hub child lists) ---- */
+.mw-anchor-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0 0 8px;
+  padding: 0;
+  list-style: none;
+}
+
+.mw-anchor-nav a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border: 1.5px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  background: var(--paper);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--navy-800);
+  text-decoration: none;
+}
+
+.mw-anchor-nav a:hover,
+.mw-anchor-nav a:focus-visible {
+  border-color: var(--gold-400);
+  background: var(--paper);
+}
+
+/* --- the repair-only warranty callout. Identical wording on every repair
+   page, so it gets one component instead of five ad-hoc boxes. --- */
+.mw-callout {
+  margin: 0 0 24px;
+  padding: 18px 22px;
+  border-left: 3px solid var(--gold-400);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  background: var(--paper);
+  box-shadow: var(--shadow);
+}
+
+.mw-callout__title {
+  margin: 0 0 6px;
+  font-family: var(--font-display);
+  font-size: 1.0625rem;              /* 17px */
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.mw-callout p { margin: 0; color: var(--ink-2); }
+.mw-callout p + p { margin-top: 10px; }
+
+/* --- Realtor form: fieldsets, checkbox group, file input ------------------- */
+.mw-form--realtor .mw-form__grid { row-gap: 4px; }
+
+.mw-fieldset {
+  grid-column: 1 / -1;
+  margin: 0 0 8px;
+  padding: 20px 20px 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--paper);
+}
+
+.mw-fieldset__legend {
+  padding: 0 8px;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.mw-checkgroup {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 8px 16px;
+  margin: 4px 0 0;
+}
+
+.mw-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  font-size: 0.9375rem;              /* 15px */
+  line-height: 1.45;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.mw-check:hover { border-color: var(--line-strong); }
+
+.mw-check input[type="checkbox"] {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin: 1px 0 0;
+  accent-color: var(--navy-800);
+  cursor: pointer;
+}
+
+.mw-check input[type="checkbox"]:focus-visible {
+  outline: 3px solid var(--gold-400);
+  outline-offset: 2px;
+}
+
+.mw-check__box { display: none; }     /* the native box is the visible control */
+
+.mw-field__file {
+  padding: 10px 12px;
+  font-size: 0.9375rem;
+}
+
+.mw-field__file::file-selector-button {
+  margin-right: 12px;
+  padding: 8px 14px;
+  border: 1.5px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--paper);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--navy-800);
+  cursor: pointer;
+}
+
+@media (max-width: 639px) {
+  .mw-fieldset { padding: 16px 14px 4px; }
+  .mw-checkgroup { grid-template-columns: minmax(0, 1fr); }
+}
+
