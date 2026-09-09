@@ -1,5 +1,5 @@
 /* =============================================================================
-   Matchwork Roofing — site behaviour (mock-v2)
+   Matchwork Roofing — site behavior (mock-v2)
    Vanilla JS, no dependencies, no inline script. Safe under CSP script-src 'self'.
    Loaded with `defer`, so the DOM is parsed before this runs.
 
@@ -45,7 +45,7 @@
   }
 
   /* Focus without letting the browser's own scroll dump the target behind the
-     sticky header or the fixed call bar — centre it instead. */
+     sticky header or the fixed call bar — center it instead. */
   function focusQuietly(el) {
     if (!el) return;
     try {
