@@ -1,5 +1,5 @@
-# HANDOFF — Matchwork: GBP plan delivered; 7 decisions waiting on Jordan — 2026-09-10
-Updated: 2026-09-10 12:02 EDT — session `6ac9fe70-0f45-4dd5-a767-c74d92ffbf1d` (Claude **Opus 5, 1M context** — Fable 5.1 was requested but a CLI launch does NOT preserve a Fable binding; record the model that actually resolves). Successor of `2dc2683d`. Jordan is NOT DRIVING: headless `claude -p` leg; all seven decisions were spoken with `say -r 190`.
+# HANDOFF — Matchwork: STILL WAITING ON JORDAN. 7 decisions, 0 answered. — 2026-09-10
+Updated: 2026-09-10 12:12 EDT — session `f9286a7a-daef-4f05-ac92-2a4a13e5657e` (idle check-in leg; predecessor `6ac9fe70-0f45-4dd5-a767-c74d92ffbf1d`) (Claude **Opus 5, 1M context** — Fable 5.1 was requested but a CLI launch does NOT preserve a Fable binding; record the model that actually resolves). Lineage: `2dc2683d` -> `6ac9fe70` -> `f9286a7a`. Jordan is NOT DRIVING: headless `claude -p` leg; all seven decisions were spoken with `say -r 190`.
 
 ## THE SITE IS DONE. DO NOT REBUILD IT.
 No site file was created, edited, encrypted, committed or deployed this session. `docs/` untouched. Look, feel, typography and voice unchanged.
@@ -51,22 +51,32 @@ Full table: `OPEN-DECISIONS-FOR-JORDAN-2026-09-10.md`.
 ## Ruled out — do not re-raise
 The street addresses in `locations/*.html` (2100 Tremont Rd, 5600 Memorial Dr, 400 Olentangy St, 7000 Market St, …) are **`placeholder=` example text in form fields** asking the homeowner for their own address. Benign.
 
-## In flight at rollover
-- **None.** Both research subagents completed and their files are on disk. **All three assigned tasks are COMPLETE.** There is no unfinished work — the session rotated on context, not mid-task.
+## In flight
+- **Nothing.** No build work is pending or possible. Session `f9286a7a` opened, verified state, found **zero answers from Jordan**, re-spoke decisions (b) and (g) once, and ended. It did **not** roll over into another idle successor — by explicit instruction.
+
+## Session f9286a7a (2026-09-10 12:04-12:12 EDT) — what happened
+- **THREE `claude -p` legs were live on this cwd at once.** PID `76771` was still running the already-completed GBP-plan prompt (`matchwork-gbp-plan-resume-2026-09-10-a.md`, launched 11:49:40). PID `78930` was a **duplicate of this leg's own prompt file**, launched by the watcher's backup launcher 14 seconds after PID `78742` (this leg). Verified both inert (no repo writes in the prior 10 min, `lsof` showed only API sockets), killed both process trees, confirmed `git status` unchanged. **This trap has now fired in THREE consecutive sessions.**
+- **Collateral damage found and repaired:** the duplicate leg (78930) had already **overwritten `.ai-session-notes`** with its own session id `8e865bf1-df53-42c6-a175-3b7f6e7e0b59` before it was killed. Restored to `f9286a7a`. This is the concrete proof that two seats on one folder corrupt shared state — the first context-watch dry-run measured the wrong session.
+- **State verified, all green:** `git ls-remote origin main` = `821275a8cec093b31ea7dbe40339ae0f77c04014`; `821275a:docs` = `32b3aa6354a88af7b06ab92abc513495df5e2069` (identical to `bf614bc:docs` — the approved tree, unchanged); Pages `status=built` on `821275a` at 2026-09-10T16:04:37Z.
+- **Answer search (came up empty):** every repo file modified since 11:45 is agent-authored (`.ai-session-notes`, `prompts/*`, `HANDOFF.md`, `.DS_Store`). No `STATUS.md` or `ROUTE.md` exists in this repo. No annotations in `OPEN-DECISIONS-FOR-JORDAN-2026-09-10.md`. Nothing new in `~/Desktop`, `~/Downloads`; the three `~/ai-brain/memory` files touched today were written by session `6ac9fe70` at 11:58-12:00, not by Jordan.
+- **Re-spoke ONCE, per instruction:** decision **(b)** (9 dead forms discarding every lead) and decision **(g)** (fabricated schema addresses vs. the Maps-3-pack goal). The other five were not re-spoken — they were already delivered by `say` on 2026-09-10 and repeating all seven is noise.
+- **No site file was touched.** No commit, no push, no encrypt, no deploy.
 
 ## Next action (exact, first thing the successor does)
-1. Origin banner; arm watcher; **check for a second `claude -p` on this cwd and kill any stale one before working** (this trap fired again this session — PID 74533).
+1. **STEP 0 before anything: `ps aux | grep "claude -p" | grep -v grep`.** Three legs were live at once this session. Kill any leg whose `.meta` names a prompt file other than yours, and any duplicate of your own prompt file that started AFTER you. Then **re-read `.ai-session-notes` and confirm the `session_id` is yours** — a duplicate overwrites it.
 2. Verify `git ls-remote origin main` and that `<sha>:docs` still equals `32b3aa6354a88af7b06ab92abc513495df5e2069`.
-3. **Do not start new work — the 7 decisions are Jordan's.** If he has answered any, execute that one.
-4. If and only if he green-lights (g): fix the JSON-LD `streetAddress`/`name` on the 10 pages in `site-src/docs/`, re-encrypt per the documented procedure, assert 0 plaintext HTML in `docs/`, commit, push, poll the Pages build. Zero visible copy may change.
+3. **Do not start new work.** All seven decisions are Jordan's and all seven are still open as of 2026-09-10 12:12 EDT. **Do not re-speak all seven** and do not launch another idle successor.
+4. If he green-lights **(g)**: in `site-src/docs/`, drop the fabricated `"streetAddress"` from the JSON-LD on the 10 pages (`index.html`, `service-areas.html`, 5x `locations/*.html`, 3x `services/*.html`), KEEP `addressLocality`/`addressRegion`/`postalCode`, set schema `"name"` to `"Matchwork Roofing LLC"`. Diff to prove zero visible copy changed, re-encrypt per the documented procedure, assert 0 plaintext HTML in `docs/`, commit, push, poll the Pages build, confirm deployed bytes by blob-SHA equality.
+5. If he green-lights **(b)** or **(a)** instead, execute that within his stated budget.
 
 ## Human-only gates (never auto-do)
 Gate removal · DNS/Cloudflare · CNAME/_headers/gate-template · spend · **GBP creation or claiming** · reward amount final · password resets · force-push/history rewrite · mock-v2 deploy.
 
 ## Provenance
-- Session `6ac9fe70-0f45-4dd5-a767-c74d92ffbf1d` · transcript `~/.claude/projects/-Users-jpmackbookpro-Projects-matchworkroofing/6ac9fe70-0f45-4dd5-a767-c74d92ffbf1d.jsonl`
-- Doctrine dir `~/.ai-session-doctrine/claude/6ac9fe70-0f45-4dd5-a767-c74d92ffbf1d/` (context.log, ROLLOVER-*, scorecard.json)
-- **Context at rollover: Context: 117K abs · +69K above 48K baseline** — measured by context-watch.py 2026-09-10T16:02:30Z, last line of that dir's `context.log`. Never estimated.
-- Resume prompt: `prompts/matchwork-gbp-decisions-resume-2026-09-10-b.md`
-- Model actually resolved: **claude-opus-5[1m]** (Fable 5.1 requested, not preserved by CLI launch).
-- Cost: lead + 2 research subagents (90,041 + 60,674 subagent tokens). **USD UNAVAILABLE.**
+- Session `f9286a7a-daef-4f05-ac92-2a4a13e5657e` · transcript `~/.claude/projects/-Users-jpmackbookpro-Projects-matchworkroofing/f9286a7a-daef-4f05-ac92-2a4a13e5657e.jsonl`
+- Doctrine dir `~/.ai-session-doctrine/claude/f9286a7a-daef-4f05-ac92-2a4a13e5657e/` (context.log, scorecard.json)
+- **Context at end: Context: 62K abs · +14K above 48K baseline** — measured by `context-watch.py`, dry-run 2026-09-10 ~12:06 EDT. Never estimated. Nowhere near the +60K handoff threshold; this session ended because the work is Jordan's, not because of context.
+- Killed this session: PID `76771` (stale GBP-plan leg) and PID `78930` (duplicate of this leg's prompt). Survivor: PID `78742`.
+- Model actually resolved: **claude-opus-5[1m]** (Fable 5.1 requested; a CLI launch does not preserve a Fable binding).
+- Cost: lead only, no subagents launched. **USD UNAVAILABLE.**
+- Predecessor provenance: session `6ac9fe70` ended at Context: 117K abs · +69K above 48K baseline; resume prompt `prompts/matchwork-gbp-decisions-resume-2026-09-10-b.md`.
