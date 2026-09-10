@@ -1,61 +1,72 @@
-# HANDOFF — Matchwork original site: service areas + referral program — 2026-09-10
-Updated: 2026-09-10 11:45 EDT — session 2dc2683d-ca80-4edc-acb6-3a5b235a2141 (Claude Fable 5.1 HIGH, successor of 291fd600). Jordan is NOT DRIVING: this was a headless `claude -p` leg; milestones were spoken with direct `say -r 190`.
+# HANDOFF — Matchwork: GBP plan delivered; 7 decisions waiting on Jordan — 2026-09-10
+Updated: 2026-09-10 12:02 EDT — session `6ac9fe70-0f45-4dd5-a767-c74d92ffbf1d` (Claude **Opus 5, 1M context** — Fable 5.1 was requested but a CLI launch does NOT preserve a Fable binding; record the model that actually resolves). Successor of `2dc2683d`. Jordan is NOT DRIVING: headless `claude -p` leg; all seven decisions were spoken with `say -r 190`.
+
+## THE SITE IS DONE. DO NOT REBUILD IT.
+No site file was created, edited, encrypted, committed or deployed this session. `docs/` untouched. Look, feel, typography and voice unchanged.
 
 ## Rulings (Jordan — verbatim intent, do not paraphrase or re-litigate)
-- "I like the current version of the website the best so far. DO NOT change it I want it preserved in its current form." (2026-09-09 19:05 EDT) — the ORIGINAL site, tag approved-2026-09-09 = 251852f.
-- "This is the base that I want to build off of and the direction I want to take it with regards to the branding. We can update it from here but this look feel and vibe I like." (2026-09-10 11:25 EDT)
-- Contact email = info@matchworkroofing.com, never his name. (DONE 8b43913)
-- "Why don't we have more service areas listed? Look at Newman's page … If our goal is to dominate the Google maps three pack, how are we gonna do that when we don't even have as many places listed?" (2026-09-10 11:25 EDT) — DONE bf614bc.
-- "I want to implement a referral program like Newman has: https://newmanroofing.com/referral/" (2026-09-10 11:25 EDT) — DONE bf614bc, reward amount still placeholder.
-- Four-trade mock-v2 build REJECTED (copy "appalling", Sora font "kindergartner's"). Never redeploy it.
+- "I like the current version of the website the best so far. DO NOT change it I want it preserved in its current form." (2026-09-09 19:05) — the ORIGINAL site. Tag `approved-2026-09-09` (annotated, object 60cd5d1) → commit **`251852f`** — resolved this session with `git rev-parse approved-2026-09-09^{commit}`.
+- "This is the base that I want to build off of and the direction I want to take it with regards to the branding. We can update it from here but this look feel and vibe I like." (2026-09-10 11:25)
+- Contact email = `info@matchworkroofing.com`, never his name. (DONE 8b43913)
+- Wants the Google Maps 3-pack; wanted more service areas (DONE bf614bc) and a Newman-style referral program (DONE bf614bc, reward still placeholder).
+- Four-trade mock-v2 build REJECTED ("appalling" copy, "kindergartner's" font). Never redeploy it.
 
-## State (verified facts only — each says HOW it was verified)
-- HEAD of main = **bf614bc** "feat: add Service Areas and Refer a Friend pages; fix the fake 555 phone in schema" — verified `git ls-remote origin main` = bf614bc.
-- GitHub Pages build **status "built" on bf614bc**, created 2026-09-10T15:41:27Z, duration 33.3s — verified `gh api repos/jpeplinski33/matchworkroofing/pages/builds/latest`.
-- Deployed bytes are the intended bytes — verified blob-SHA equality: `gh api contents/<f>?ref=bf614bc .sha` == `git hash-object <f>` for docs/service-areas.html, docs/referral.html, docs/index.html, docs/sitemap.xml. All 4 MATCH.
-- Site is now **16 pages** (was 14). New: `/service-areas.html`, `/referral.html`. Source = site-src/docs/ (plaintext, Tailwind CDN, no build step); docs/ = encrypted output, never hand-edited.
-- docs/ contains **0 plaintext HTML** — verified: all 16 files carry the staticrypt marker and none contains probe strings ("Canal Winchester", "Visa gift card", "Grandview Heights", "Architectural Roofing.", "info@matchworkroofing.com").
-- All internal hrefs resolve (script walked every `href="/..."` against the filesystem); all 16 pages pass an HTMLParser tag-balance check.
-- Gate is ON. Passphrase lives only in STATICRYPT_PASSWORD at encrypt time, read from ~/ai-brain/memory/matchwork-site-gated-trades-deploy-2026-09-09.md. Never written to a file, commit or chat.
-- Backup of the pre-change docs/ = `logs/docs-backup-20260910-113751/` (18 files). Not committed.
-- **The DoH-resolved verification could NOT be completed from this machine.** Both Cloudflare A records (104.21.40.106, 172.67.150.185) time out at TCP connect (`connect=0.000000`, curl 28) even with `--resolve`. This is worse than the documented Breezeline sinkhole — outbound to those IPs does not establish at all. The Pages-build + blob-SHA evidence above is what stands in its place. UNKNOWN until someone loads the site on cellular: that the two new URLs render in a browser.
+## State (verified facts only — each says HOW)
+- `main` = **`09d31a2`** — `git ls-remote origin main`. This is the predecessor's docs/handoff commit on top of the approved `bf614bc`.
+- **The published site is byte-identical to `bf614bc`** — `git rev-parse bf614bc:docs` == `09d31a2:docs` == `32b3aa6354a88af7b06ab92abc513495df5e2069`, and `git diff --name-only bf614bc 09d31a2 -- docs/ site-src/` is empty. (The resume prompt expected main==bf614bc; this deviation was proved benign rather than treated as a STOP.)
+- GitHub Pages **status "built" on `09d31a2`**, updated 2026-09-10T15:50:22Z — `gh api repos/jpeplinski33/matchworkroofing/pages/builds/latest`.
+- Site is **16 pages**. Gate ON. Passphrase lives only in `STATICRYPT_PASSWORD` at encrypt time.
+- Repo is **PUBLIC** and **20 plaintext files are tracked under `site-src/docs/`** — `gh repo view`, `git ls-files`. **The gate is bypassable via the repo.** See decision (f).
+- Services the site actually sells (checked this session): architectural roof replacement (incl. Grand Manor, Landmark PRO, standing-seam metal), ITEL shingle match testing, storm damage & insurance claims. **Gutters appear only in blog text; siding appears once and only as a surface shingle color is matched to.** This matters for GBP categories.
+- **Still UNKNOWN:** that `/service-areas.html` and `/referral.html` render in a browser. This machine cannot reach Cloudflare at all (both IPs time out at TCP connect, curl 28). Needs Jordan on cellular.
 
-### What was built (bf614bc)
-- `/service-areas.html` (19.7KB): hero, 6 linked primary areas (Columbus -> /services/roof-replacement-columbus.html, plus the 5 location pages), 25 plain-text additional Central Ohio communities, closing "Don't see your area? Call (614) 741-1393." band. JSON-LD areaServed = 31 cities, telephone +1-614-741-1393.
-- `/referral.html` (18.4KB): "Refer a Friend / It pays to have friends", reward placeholder, 3-step how-it-works, full Newman-shape form (First/Last, Email, Phone, Address, Business optional, Referral Name, Referral Phone, Notes), "Send My Referral" button, "Prefer to call?" tel link.
-- index.html: `#locations` grew 8 -> 31 names + "View All Service Areas" button + don't-see-your-area line; JSON-LD areaServed 8 -> 31; new compact navy referral band above the footer.
-- Sitewide: both pages added to nav and footer on all 14 old pages; stale `/#locations` anchors repointed to `/service-areas.html`; sitemap.xml 14 -> 16 URLs.
+## Delivered this session
+`~/Projects/matchwork-website-revamp-2026-09-06/deliverables/`
+- **`GBP-PLAN-2026-09-10.md`** — the deliverable. 31 communities verbatim from source, the 20-area GBP cap + prioritized 20 and the 11 held back, categories, the honest Tier1/2/3 lever ranking with the website's real role, NAP + citations, reviews, photos, Q&A, execution order, and what it does NOT claim.
+- `GBP-CATEGORIES-RESEARCH-2026-09-10.md` · `GBP-NAP-CITATIONS-2026-09-10.md` · `gbp-us-categories-2026-09-10.tsv` (4,044 real Google categories, the ground truth)
+- **`OPEN-DECISIONS-FOR-JORDAN-2026-09-10.md`** — the 7 decisions in one table.
 
-### Two defects found in the approved original site
-1. **FIXED in bf614bc — fake 555 phone.** All 9 schema-bearing pages carried `"telephone": "+1-614-555-0199"` in their RoofingContractor JSON-LD while displaying (614) 741-1393. A banned string, and a direct NAP-consistency break for the exact Maps-3-pack goal Jordan asked about. Changed to +1-614-741-1393. Zero visible copy changed, so "preserved in its current form" is intact.
-2. **NOT FIXED — flagged for Jordan.** Every one of the 9 existing lead forms is a dead mockup: `<form>` with no action/method, inputs with no `name`, `<button type="button">`. **Every lead submitted on the live site goes nowhere.** Not touched because choosing a form backend is Jordan's call (and may cost money). The new referral form therefore does NOT copy that pattern — its button composes a `mailto:info@matchworkroofing.com` via inline JS (verified: the gate uses `document.write(plainHTML)`, so inline scripts DO execute after unlock), with a `tel:` fallback beneath it.
+### The plan's headline findings
+- **Primary category = `Roofing contractor`, and it is not a choice** — no "Roofer"/"Roof repair service"/"Roof inspection service" exists in the 4,044-row en-US list.
+- **No Google category exists for insurance restoration.** Near-misses are traps (`Water/Fire damage restoration service` = a different trade; `Loss adjuster` = a licensed activity in Ohio, hard reject; `Roofing supply store` = retail/suspension risk). That relevance must come from the profile's services list, description, linked pages and reviews.
+- **Secondaries are ALL conditional** on what Matchwork actually does — on website evidence only the primary is confirmable.
+- **GBP caps service areas at 20**, the site lists 31. Re-verify the cap in the interface at entry time.
+- **The website is Tier 2 support, not the lever.** Proximity, primary category, and review volume+velocity decide the 3-pack.
+- `roofing-review-builder` skill is the review engine but is **branded for RSO** — point it at Matchwork before the first run.
 
-### Pre-existing copy NOT touched (Jordan's approved text; §0 would ban it in new work)
-- "Owens Corning" appears in index.html (x1), blog/hail-damage-vs-blistering-ohio.html (x1), services/roof-replacement-columbus.html (x2).
-- "certif*" appears in services/shingle-matching-test.html (x5), services/roof-replacement-columbus.html (x2), services/storm-damage-insurance-claims.html (x2).
-- Left alone deliberately: rewriting approved copy is Jordan's decision, not a build decision. Raise it with him.
+## 7 OPEN DECISIONS — ALL SPOKEN TO JORDAN, ALL WAITING
+Full table: `OPEN-DECISIONS-FOR-JORDAN-2026-09-10.md`.
+- **(a)** Referral reward amount + trigger — placeholder `$100 Visa gift card… once your referral's appointment is scheduled`, `<!-- OWNER DECISION -->` at `site-src/docs/referral.html:95`. His money.
+- **(b)** Form backend — **all 9 lead forms are dead mockups; every lead typed into the live site is discarded.** May cost money.
+- **(c)** "Owens Corning" / "certif\*" in his approved copy (locations below). His call.
+- **(d)** Browser verification of the two new URLs — needs his phone on cellular.
+- **(e)** Radius: Cardington, Marengo, Utica, Mount Vernon, Centerburg, Lancaster were DROPPED. Confirm.
+- **(f)** Public repo + tracked plaintext = the gate has a back door. (Finding of 2026-09-09, re-verified still live.)
+- **(g)** **NEW:** fabricated `streetAddress` in JSON-LD on **10 pages** ("Columbus Metro Hub", "…Service Hub") + schema name missing "LLC". Same class as the 555 phone. **Invisible fix, zero copy change**, but needs a rebuild+redeploy.
+
+## Pre-existing copy NOT touched (Jordan's approved text)
+- "Owens Corning": `index.html` ×1, `blog/hail-damage-vs-blistering-ohio.html` ×1, `services/roof-replacement-columbus.html` ×2.
+- "certif\*": `services/shingle-matching-test.html` ×5, `services/roof-replacement-columbus.html` ×2, `services/storm-damage-insurance-claims.html` ×2.
+
+## Ruled out — do not re-raise
+The street addresses in `locations/*.html` (2100 Tremont Rd, 5600 Memorial Dr, 400 Olentangy St, 7000 Market St, …) are **`placeholder=` example text in form fields** asking the homeowner for their own address. Benign.
 
 ## In flight at rollover
-- None. Both build subagents (opus-high) completed and their files are committed.
-
-## Missing / blocked
-- **Referral reward amount + trigger = Jordan's money decision.** Shipped placeholder: "$100 Visa gift card, emailed to you once your referral's appointment is scheduled." Marked in source with `<!-- OWNER DECISION: reward amount and trigger — placeholder default below, confirm before this goes public -->` at site-src/docs/referral.html:95. No fine print invented.
-- **Form backend** — 9 dead forms + the referral mailto stopgap. Needs a decision (and possibly spend).
-- **Browser verification of the two new URLs** — blocked by the network, needs cellular or another machine.
-- **The honest Maps-3-pack note, owed and DELIVERED by `say`:** a website service-area list does not by itself move the Maps 3-pack. GBP service areas, review volume/velocity, categories and searcher proximity do. The website list supports it (relevance + landing pages) but is not the lever. The same 31-community list must go into the GBP plan.
+- **None.** Both research subagents completed and their files are on disk. **All three assigned tasks are COMPLETE.** There is no unfinished work — the session rotated on context, not mid-task.
 
 ## Next action (exact, first thing the successor does)
-1. Origin banner; arm watcher; verify `git ls-remote origin main` = bf614bc and `gh api .../pages/builds/latest` = built.
-2. Put the 31-community list into the GBP plan doc (~/Projects/matchwork-website-revamp-2026-09-06/deliverables/) as the GBP "service areas" entry, and write the honest 3-pack lever list (categories, reviews, proximity, NAP) beside it.
-3. Ask Jordan (via the log + `say`, no waiting): confirm the $100/at-scheduled-appointment reward, and decide the form backend.
-4. Do NOT touch the 9 dead forms or the Owens Corning / certif copy without Jordan's word.
+1. Origin banner; arm watcher; **check for a second `claude -p` on this cwd and kill any stale one before working** (this trap fired again this session — PID 74533).
+2. Verify `git ls-remote origin main` and that `<sha>:docs` still equals `32b3aa6354a88af7b06ab92abc513495df5e2069`.
+3. **Do not start new work — the 7 decisions are Jordan's.** If he has answered any, execute that one.
+4. If and only if he green-lights (g): fix the JSON-LD `streetAddress`/`name` on the 10 pages in `site-src/docs/`, re-encrypt per the documented procedure, assert 0 plaintext HTML in `docs/`, commit, push, poll the Pages build. Zero visible copy may change.
 
 ## Human-only gates (never auto-do)
-- Gate removal, DNS/Cloudflare, CNAME/_headers/gate-template, spend, GBP creation, reward amount final, password resets, force-push/history rewrite, mock-v2 deploy.
+Gate removal · DNS/Cloudflare · CNAME/_headers/gate-template · spend · **GBP creation or claiming** · reward amount final · password resets · force-push/history rewrite · mock-v2 deploy.
 
 ## Provenance
-- Session id: 2dc2683d-ca80-4edc-acb6-3a5b235a2141 · Transcript: ~/.claude/projects/-Users-jpmackbookpro-Projects-matchworkroofing/2dc2683d-ca80-4edc-acb6-3a5b235a2141.jsonl
-- Context at rollover: Context: 112K abs · +65K above 47K baseline — measured by context-watch.py at 2026-09-10T15:41:51Z (never estimated).
-- Doctrine dir: ~/.ai-session-doctrine/claude/2dc2683d-ca80-4edc-acb6-3a5b235a2141/
-- Prior handoffs: this file's 291fd600 revision (in git history) · ~/Projects/matchwork-website-revamp-2026-09-06/HANDOFF.md
-- Cost: lead + 2 opus-high build subagents (65,792 + 65,355 subagent tokens). USD UNAVAILABLE.
+- Session `6ac9fe70-0f45-4dd5-a767-c74d92ffbf1d` · transcript `~/.claude/projects/-Users-jpmackbookpro-Projects-matchworkroofing/6ac9fe70-0f45-4dd5-a767-c74d92ffbf1d.jsonl`
+- Doctrine dir `~/.ai-session-doctrine/claude/6ac9fe70-0f45-4dd5-a767-c74d92ffbf1d/` (context.log, ROLLOVER-*, scorecard.json)
+- **Context at rollover: Context: 117K abs · +69K above 48K baseline** — measured by context-watch.py 2026-09-10T16:02:30Z, last line of that dir's `context.log`. Never estimated.
+- Resume prompt: `prompts/matchwork-gbp-decisions-resume-2026-09-10-b.md`
+- Model actually resolved: **claude-opus-5[1m]** (Fable 5.1 requested, not preserved by CLI launch).
+- Cost: lead + 2 research subagents (90,041 + 60,674 subagent tokens). **USD UNAVAILABLE.**
