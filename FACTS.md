@@ -15,3 +15,6 @@ Forms had no backend and discarded input. This refresh uses phone/email actions;
 Map retired. Future JobShutter integration needs owner-approved project selection, attribution and photo permission, accurate trade/material captions, privacy handling, and a maintainable publish/unpublish workflow. No made-up pins or placeholder experience.
 ## Sources
 Owner message September 11; current restored site/contact and September 10 restoration record; latest generate_hybrid.py and actual card preview; old plans are proposals, not verified business facts.
+
+## September 11 launch authorization
+Jordan needs to use the website within an hour and explicitly says prospects cannot encounter a blocked website. Publish the cleaned site without the password. No CertainTeed certification/warranty, financing, licensing, or company-insured claims. No DNS changes unless separately authorized.

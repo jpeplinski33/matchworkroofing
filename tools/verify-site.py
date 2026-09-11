@@ -4,7 +4,7 @@ from urllib.parse import urlsplit,unquote
 import json,re,sys
 root=Path(__file__).resolve().parents[1]/'site-src/docs'
 errors=[]; pages=list(root.rglob('*.html')); counts={}
-ban=re.compile(r"financ|\bwarrant|\bcertif|owens\s+corning|bespoke|\bguarantee|non.prorat|\bAPR\b|555[ -]|sub.millimeter|\bforensic|superpower|zero stray|100%|\bOAC\b|3901-1-54|3999.22",re.I)
+ban=re.compile(r"\blicen[cs](?:ed|ing)\b|\binsured\b|\bbonded\b|financ|\bwarrant|\bcertif|owens\s+corning|bespoke|\bguarantee|non.prorat|\bAPR\b|555[ -]|sub.millimeter|\bforensic|superpower|zero stray|100%|\bOAC\b|3901-1-54|3999.22",re.I)
 for p in pages:
  rel=p.relative_to(root).as_posix();raw=p.read_text();s=BeautifulSoup(raw,'html.parser')
  for word in sorted(set(ban.findall(raw))):errors.append(f'{rel}: banned wording {word}')
