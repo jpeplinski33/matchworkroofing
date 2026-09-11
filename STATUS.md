@@ -1,3 +1,11 @@
-# Current state — 2026-09-10
+# Current state — September 11, 2026
 
-Jordan requested restoring logs/site-before-update-251852f as the baseline. The ONLY requested change is replacing the listed owner email with info@matchworkroofing.com. The saved baseline is untouched. Current source restored and verified against all saved files. All 14 encrypted pages successfully decrypt to the exact restored source. LIVE and verified at commit 133d7ed19602a6db91d0963cf135655ca61c66ab. GitHub Pages built successfully; all 14 HTML pages plus sitemap and robots match deployed bytes exactly (16/16). Chrome reload and screenshot confirm the original layout, original service-area block, and info email. Existing gate and salt retained. No further site changes authorized. Later work is preserved in Git and logs/before-email-only-restore-20260910-123415.
+Jordan explicitly authorized public launch: prospects must be able to use the website within an hour without a password and without false CertainTeed, financing, licensing or insurance claims.
+
+Published source revision: 6c5a52fbdf8c1c6c02d1d6c12974bc94b0bb1ac3. GitHub Pages build reports built. Public docs are now exact plaintext copies of site-src/docs; the gate is OFF intentionally. Do not re-encrypt or restore historical protected pages. Old gate files are retained only for versioned rollback.
+
+Same 13 content URLs plus retired portfolio redirect. No warranty/certification, financing, licensing/bonding/insured-company claims, Owens Corning, bespoke, emojis, invented map jobs or case studies. CertainTeed product names retained. Lean true company schema. Four trades represented. Business card colors/type applied to existing architecture. Real phone/email contact links replace inert forms.
+
+Actual route completed: Antigravity CLI design -> Claude Fable 5.1 CLI copy (319 changes) -> Codex editorial review/implementation -> Grok CLI PASS at3f7ffce. All four optional low findings addressed; final bounded refinements177899b, public output6c5a52f. Evidence, exact prompts and logs live in sibling matchwork-refresh-2026-09-11. FACTS.md and tools/verify-site.py are authoritative for future work.
+
+No DNS, mailbox, external messages, purchases or credentials changed. Phone(614)741-1393 and info@matchworkroofing.com preserved. No new photo/JobShutter integration. Saved original and rejected builds remain in history and must not overwrite current source.
