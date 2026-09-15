@@ -11,3 +11,7 @@ Actual route completed: Antigravity CLI design -> Claude Fable 5.1 CLI copy (319
 No DNS, mailbox, external messages, purchases or credentials changed. Phone(614)741-1393 and info@matchworkroofing.com preserved. No new photo/JobShutter integration. Saved original and rejected builds remain in history and must not overwrite current source.
 
 Owner follow-up published: larger Arial body text and Georgia headings; original card wordmark and navy/gold retained. Friendly Get an Estimate wording replaces Discuss Your Project and other formal sales copy (59 occurrences). New Albany first and Bexley included across service-area lists. Claim/link audit and 26 local desktop/mobile checks pass. Six fresh live-browser checks and 28 public asset/page/domain comparisons pass. Public CSS uses ?v=20260911-2 to bypass old cached stylesheet. Evidence in sibling task deliverables/typography-*.
+
+## 2026-09-15 — OG candidate, local only
+
+Codex added the approved v5 candidate matchwork-og-da1a813a.jpg and head-only OG/Twitter tags to all 14 pages in both site-src/docs and docs. Candidate uses Meyer-Hero.jpg solely for local review; photo choice and publishing await Jordan. No push; copy, body, JSON-LD, CSS, navigation, gate files, CNAME, sitemap and robots unchanged. Capture app needs no changes.
