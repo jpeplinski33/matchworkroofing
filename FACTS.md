@@ -1,6 +1,6 @@
 # Website facts and publication rules — September 11, 2026
 ## Owner-approved identity
-- Display brand: Matchwork Roofing & Exteriors. Legal footer/schema entity: Matchwork Roofing LLC.
+- Display brand: Matchwork Roofing & Exteriors. Legal entity (footer + schema legalName): Matchwork Roofing & Exteriors LLC (Ohio 5671365; renamed from Matchwork Roofing LLC, amendment 202626100580 effective 2026-09-18). Schema name = brand.
 - Existing website contact: (614) 741-1393; info@matchworkroofing.com. Do not use personal business-card contact.
 - Domain: matchworkroofing.com; no domain migration authorized.
 - Services identified by owner: Roofing, Siding, Gutters, Masonry. Do not extrapolate divisions, staffing, specialty systems, equipment, or completed-project experience.
