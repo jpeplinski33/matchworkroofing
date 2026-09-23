@@ -26,7 +26,8 @@ for p in pages:
  if p.name!='portfolio-map.html':
   if len(s.find_all('h1'))!=1:errors.append(f'{rel}: expected one h1')
   if not s.select('a[href="tel:+16147411393"]'):errors.append(f'{rel}: missing phone link')
-  if s.find('form'):errors.append(f'{rel}: unresolved form')
+  for f in s.find_all('form'):
+   if f.get('data-backend')!='formsubmit':errors.append(f'{rel}: unresolved form')
   if not s.select('.mw-menu summary'):errors.append(f'{rel}: missing mobile nav')
   if not s.select('meta[name="description"]'):errors.append(f'{rel}: missing description')
  if 'cdn.tailwindcss.com' in raw:errors.append(f'{rel}: development CDN')
