@@ -42,3 +42,6 @@ Homepage #quote panel now has a REAL form alongside the unchanged call/email CTA
 IMPORTANT — FormSubmit one-time activation: the FIRST real submission triggers a confirmation email to info@matchworkroofing.com; Jordan must click the activation link in that email once before submissions deliver to the inbox.
 
 Verified: python3 tools/verify-site.py reports errors: [] (15 pages); form JS passes node --check; docs/ synced via rsync -a --delete and diff -rq site-src/docs docs is empty. Committed locally; NOT pushed (push publishes).
+
+### 2026-09-23 later — published (Kimi CLI)
+Pushed 252d52e. Pages build "built" on 252d52e. Live-verified from outside Breezeline: /service-areas.html serves full page (6 primary + 25 wider-coverage communities + Don't See Your Area CTA), homepage serves the new Get-an-Estimate copy with form. Note: this Mac currently cannot TLS to Cloudflare directly (Breezeline filter again, and the SOCKS bypass tunnel is degraded — exit 255 respawn loop). Live checks were done via an external fetch path. The PAC/tunnel bypass may need re-establishing if Jordan wants local browser access before the Breezeline allowlist is done.
