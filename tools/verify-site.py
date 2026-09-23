@@ -4,10 +4,18 @@ from urllib.parse import urlsplit,unquote
 import json,re,sys
 root=Path(__file__).resolve().parents[1]/'site-src/docs'
 errors=[]; pages=list(root.rglob('*.html')); counts={}
-ban=re.compile(r"\blicen[cs](?:ed|ing)\b|\binsured\b|\bbonded\b|financ|\bwarrant|\bcertif|owens\s+corning|bespoke|\bguarantee|non.prorat|\bAPR\b|555[ -]|sub.millimeter|\bforensic|superpower|zero stray|100%|\bOAC\b|3901-1-54|3999.22",re.I)
+ban=re.compile(r"\blicen[cs](?:ed|ing)\b|\binsured\b|\bbonded\b|financ|owens\s+corning|bespoke|\bguarantee|non.prorat|\bAPR\b|555[ -]|sub.millimeter|\bforensic|superpower|zero stray|100%|\bOAC\b|3901-1-54|3999.22",re.I)
+warranty_words=re.compile(r"\bwarrant|\bcertif",re.I)
+credential_ban=re.compile(r"shinglemaster|master\s+craftsman|surestart\s*\+?\s*plus|[345]\s*[- ]\s*star|\bcredentialed\b|factory.certified|integrity\s+roof\s+system",re.I)
+warranty_link=re.compile(r"https?://(?:www\.)?certainteed\.com/[^\"' ]*warrant",re.I)
 for p in pages:
  rel=p.relative_to(root).as_posix();raw=p.read_text();s=BeautifulSoup(raw,'html.parser')
  for word in sorted(set(ban.findall(raw))):errors.append(f'{rel}: banned wording {word}')
+ text=s.get_text(' ',strip=True)
+ for word in sorted(set(credential_ban.findall(text))):errors.append(f'{rel}: banned CertainTeed credential claim {word}')
+ if warranty_words.search(raw):
+  if 'certainteed' not in raw.lower() or not warranty_link.search(raw):
+   errors.append(f'{rel}: warranty/certification wording without CertainTeed attribution + certainteed.com warranty link')
  if re.search('[\U0001F000-\U0001FFFF]',raw):errors.append(f'{rel}: emoji')
  for e in s.select('script[type="application/ld+json"]'):
   try:json.loads(e.string)

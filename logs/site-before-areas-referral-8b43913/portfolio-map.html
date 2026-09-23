@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Project Map | Matchwork Roofing Central Ohio</title>
+  <meta name="description" content="Explore recent Matchwork Roofing installations across Columbus, Dublin, Upper Arlington, New Albany, and Powell. Filter by CertainTeed shingle color, luxury slate, and metal systems.">
+  <link rel="canonical" href="https://matchworkroofing.com/portfolio-map.html">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Leaflet CSS & JS for Interactive Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    #map { height: 600px; width: 100%; border-radius: 16px; z-index: 10; }
+    .custom-pin {
+      background: #1e3a8a;
+      color: #fbbf24;
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 11px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .custom-pin:hover { transform: scale(1.2); }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans antialiased">
+
+  <!-- Header -->
+  <header class="bg-white sticky top-0 z-50 shadow-sm border-b border-slate-100">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-blue-950 rounded-lg flex items-center justify-center text-white font-black text-xl">MR</div>
+        <div>
+          <a href="/" class="text-2xl font-black tracking-tight text-blue-950">MATCHWORK<span class="text-amber-500">.</span></a>
+          <p class="text-[9px] tracking-widest text-slate-500 uppercase font-bold">Interactive Project Map</p>
+        </div>
+      </div>
+      <nav class="hidden md:flex items-center gap-7 font-semibold text-sm text-slate-700">
+        <a href="/" class="hover:text-blue-950">Home</a>
+        <a href="/services/roof-replacement-columbus.html" class="hover:text-blue-950">Roof Replacement</a>
+        <a href="/portfolio-map.html" class="text-blue-950 font-bold">Project Map</a>
+        <a href="/#locations" class="hover:text-blue-950">Service Areas</a>
+      </nav>
+      <a href="/#quote" class="bg-blue-950 hover:bg-blue-900 text-white font-bold text-sm px-5 py-2.5 rounded-lg shadow-md transition">Request Inspection</a>
+    </div>
+  </header>
+
+  <!-- Hero & Filter Bar -->
+  <section class="bg-slate-950 text-white py-12 px-4">
+    <div class="max-w-7xl mx-auto text-center space-y-4">
+      <span class="text-amber-400 text-xs font-black uppercase tracking-wider">Central Ohio Installations</span>
+      <h1 class="text-3xl md:text-4xl font-black tracking-tight">Explore Recent Matchwork Roofs Near You</h1>
+      <p class="text-slate-400 text-sm max-w-2xl mx-auto leading-relaxed">
+        Browse real completed projects across Dublin, Upper Arlington, New Albany, Powell, and Greater Columbus. Filter by material line, shingle color, and neighborhood.
+      </p>
+    </div>
+  </section>
+
+  <!-- Map Container -->
+  <section class="max-w-7xl mx-auto px-4 py-8">
+    <div class="bg-white p-6 rounded-2xl shadow-xl border border-slate-200">
+      
+      <!-- Filter Controls -->
+      <div class="flex flex-wrap gap-4 items-center justify-between pb-6 mb-6 border-b border-slate-100">
+        <div class="flex flex-wrap gap-2 items-center text-xs font-bold text-slate-700">
+          <span>Filter By Material:</span>
+          <button onclick="filterProjects('all')" class="filter-btn px-3 py-1.5 rounded-full bg-blue-950 text-white transition active-filter" data-filter="all">All Projects</button>
+          <button onclick="filterProjects('Landmark PRO')" class="filter-btn px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 transition" data-filter="Landmark PRO">Landmark PRO</button>
+          <button onclick="filterProjects('Grand Manor')" class="filter-btn px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 transition" data-filter="Grand Manor">Grand Manor Slate</button>
+          <button onclick="filterProjects('Standing Seam')" class="filter-btn px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 transition" data-filter="Standing Seam">Standing Seam Metal</button>
+        </div>
+        <div class="text-xs text-slate-500 font-medium">
+          Showing <span id="project-count" class="font-bold text-blue-950">8</span> verified installations
+        </div>
+      </div>
+
+      <!-- Leaflet Map -->
+      <div id="map"></div>
+
+    </div>
+  </section>
+
+  <!-- Map Script -->
+  <script>
+    const projects = [
+      {
+        id: 1,
+        title: "CertainTeed Landmark PRO (Moire Black)",
+        neighborhood: "Muirfield Village, Dublin OH",
+        lat: 40.1345,
+        lng: -83.1532,
+        material: "Landmark PRO",
+        color: "Max Def Moire Black",
+        details: "Full tear-off, 6-layer CertainTeed system, high-definition ridge caps, copper valley flashing, Muirfield ARB approved.",
+        badge: "Dublin Estate"
+      },
+      {
+        id: 2,
+        title: "CertainTeed Grand Manor Luxury Slate Profile",
+        neighborhood: "Old Arlington, Upper Arlington OH",
+        lat: 40.0165,
+        lng: -83.0560,
+        material: "Grand Manor",
+        color: "Stonegate Gray",
+        details: "Five-layer luxury slate aesthetic, custom hand-fabricated copper chimney flashing, lifetime transferable warranty.",
+        badge: "Luxury Slate"
+      },
+      {
+        id: 3,
+        title: "Landmark PRO (Georgetown Gray) & Metal Porch",
+        neighborhood: "New Albany Country Club, New Albany OH",
+        lat: 40.0815,
+        lng: -82.8080,
+        material: "Landmark PRO",
+        color: "Georgetown Gray",
+        details: "CertainTeed Landmark PRO combined with matte black standing seam metal over low-slope front porch and dormers.",
+        badge: "New Albany Classic"
+      },
+      {
+        id: 4,
+        title: "CertainTeed Landmark PRO (Weathered Wood)",
+        neighborhood: "Golf Village, Powell OH",
+        lat: 40.1685,
+        lng: -83.0820,
+        material: "Landmark PRO",
+        color: "Weathered Wood",
+        details: "Complete system replacement with Catch-All yard netting protection and triple magnetic sweep.",
+        badge: "Powell Residential"
+      },
+      {
+        id: 5,
+        title: "24-Gauge Standing Seam Metal Roof",
+        neighborhood: "Highland Lakes, Westerville OH",
+        lat: 40.1510,
+        lng: -82.9150,
+        material: "Standing Seam",
+        color: "Matte Black Kynar 500",
+        details: "Concealed fastener standing seam system, 130+ MPH wind rating, 70-year architectural lifespan.",
+        badge: "Standing Seam Metal"
+      },
+      {
+        id: 6,
+        title: "CertainTeed Landmark PRO (Colonial Slate)",
+        neighborhood: "Tartan Fields, Dublin OH",
+        lat: 40.1480,
+        lng: -83.1820,
+        material: "Landmark PRO",
+        color: "Colonial Slate",
+        details: "Complete storm restoration matching project with OAC 3901-1-54 full carrier coverage.",
+        badge: "Restoration Superpower"
+      },
+      {
+        id: 7,
+        title: "CertainTeed Grand Manor (Black Pearl)",
+        neighborhood: "Bexley Historic District, Bexley OH",
+        lat: 39.9650,
+        lng: -82.9350,
+        material: "Grand Manor",
+        color: "Black Pearl",
+        details: "Architectural slate replication with copper valleys and continuous ridge ventilation.",
+        badge: "Bexley Estate"
+      },
+      {
+        id: 8,
+        title: "CertainTeed Landmark PRO (Burnt Sienna)",
+        neighborhood: "Scioto Trace, Columbus / Hilliard OH",
+        lat: 40.0380,
+        lng: -83.1400,
+        material: "Landmark PRO",
+        color: "Burnt Sienna",
+        details: "Warm earthtone architectural laminate matching custom exterior brick and cedar trim.",
+        badge: "Color Match"
+      }
+    ];
+
+    const map = L.map('map').setView([40.08, -83.05], 11);
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; <a href="https://carto.com/">CARTO</a>',
+      maxZoom: 19
+    }).addTo(map);
+
+    let markers = [];
+
+    function renderPins(items) {
+      markers.forEach(m => map.removeLayer(m));
+      markers = [];
+
+      items.forEach(p => {
+        const customIcon = L.divIcon({
+          className: 'custom-pin-wrap',
+          html: `<div class="custom-pin">MR</div>`,
+          iconSize: [32, 32],
+          iconAnchor: [16, 16]
+        });
+
+        const popupContent = `
+          <div style="font-family: sans-serif; min-width: 220px; padding: 4px;">
+            <span style="background: #1e3a8a; color: #ffffff; font-size: 9px; font-weight: 800; text-transform: uppercase; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 4px;">${p.badge}</span>
+            <h4 style="font-size: 13px; font-weight: 800; color: #0f172a; margin: 2px 0 4px 0;">${p.title}</h4>
+            <p style="font-size: 11px; font-weight: 600; color: #d97706; margin: 0 0 4px 0;">📍 ${p.neighborhood}</p>
+            <p style="font-size: 10px; color: #64748b; line-height: 1.4; margin: 0 0 8px 0;">${p.details}</p>
+            <a href="/#quote" style="display: block; background: #0f172a; color: #ffffff; text-align: center; font-size: 10px; font-weight: 700; padding: 6px 8px; border-radius: 6px; text-decoration: none;">Get a Roof Like This →</a>
+          </div>
+        `;
+
+        const marker = L.marker([p.lat, p.lng], { icon: customIcon })
+          .bindPopup(popupContent)
+          .addTo(map);
+
+        markers.push(marker);
+      });
+
+      document.getElementById('project-count').innerText = items.length;
+    }
+
+    function filterProjects(filter) {
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        if (btn.dataset.filter === filter) {
+          btn.className = "filter-btn px-3 py-1.5 rounded-full bg-blue-950 text-white transition active-filter";
+        } else {
+          btn.className = "filter-btn px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 transition";
+        }
+      });
+
+      if (filter === 'all') {
+        renderPins(projects);
+      } else {
+        const filtered = projects.filter(p => p.material === filter);
+        renderPins(filtered);
+      }
+    }
+
+    renderPins(projects);
+  </script>
+
+  <!-- Footer -->
+  <footer class="bg-slate-950 text-slate-400 py-10 px-4 text-xs mt-12 border-t border-slate-800 text-center">
+    <p>&copy; 2026 Matchwork Roofing LLC. Interactive Project Portfolio.</p>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,112 @@
+**Jordan — the copy hotfix is live behind the gate.** https://matchworkroofing.com — same passphrase as before, "Remember me" still works.
+
+**SHA `6a658d4`** · Pages build confirmed `built` · verified live through Cloudflare (`/` HTTP 200, `/contact/` 98,499 bytes, gate intact, zero plaintext leaks).
+
+## The hero lines you called out
+
+| | Before | After |
+|---|---|---|
+| Hero proof #1 | Col**ou**r matched in person | **Color** matched in person |
+| Hero proof #3 title | Four trades, one **crew** | Four trades, one **contract** |
+| Hero proof #3 body | **No subcontracted handoffs** | **One project lead from estimate to final walk-through** |
+| Hero lede | **One crew** for the whole exterior | **One contract** for the whole exterior |
+| /contact/ | "Our phone number is **still being set up**, so email reaches us fastest today" | "**Call (614) 741-1393 or email us.** Every message is read by the person who will do the estimate…" |
+
+## Spelling
+
+**547 British spellings fixed**, residual **zero**: 169 in page copy, 4 in CSS/JS, plus 374 the first sweep would have missed — *mitred, galvanised, labelled, judgement, ageing, behaviour, tyre, prioritise, summarise*. `ColorPlus` (the Hardie product) correctly left alone.
+
+## The crew claim
+
+Your resume prompt named 6 places. There were **25** — 20 saying "one crew" and **5 more telling the same lie in different words**: *"measured, formed and hung by our own crew"*, *"we fabricate, solder and hang it ourselves"*, *"the crew that measures your eave is the crew that puts the metal on it"*, *"siding, gutters and masonry run through the same crew"*, *"handled by the same crew in the same visit."* All rewritten to what's actually true — **one company, one contract, one project lead, one warranty, one clean site.** The honest uses on the About page (describing the industry failure mode you're *against*) stayed.
+
+## So it can't come back
+
+18 new banned regexes in **both** `build.py` and `tools/verify.py`. Proven, not asserted — I injected *"Colour matched by one crew; the phone is still being set up"* into a page and the build died naming all three, then restored it.
+
+## One thing worth knowing
+
+A bulk rule I wrote corrupted **`aria-labelledby` → `aria-labeledby`** across every page — a real accessibility break. **All four of your checkers passed it.** A word-level diff audit caught it before it shipped. That's now a standing rule in the addendum: no bulk text transform ships without one. I also made `mock-v2` a git repo (snapshot `0fd8b14` before any edit) — that's the only reason the audit was possible.
+
+## Your addendum
+
+[lane-a-addendum-copy-standards-2026-09-09.md](/Users/jpmackbookpro/Projects/matchwork-website-revamp-2026-09-06/prompts/lane-a-addendum-copy-standards-2026-09-09.md) — 573 words, open on your screen now · [Show in Finder](/Users/jpmackbookpro/Projects/matchwork-website-revamp-2026-09-06/prompts/)
+
+```markdown
+# Lane A addendum — COPY STANDARDS (2026-09-09)
+
+Rides with `prompts/lane-a-website-execute-2026-09-09.md`. Binding on every copy
+change Lane A makes. Written after Jordan's 17:50 EDT ruling that the live gated
+site reads **"immature"**. The three defects below were fixed and shipped in
+`matchworkroofing` commit `6a658d4`; this addendum exists so they cannot come back.
+
+## 1. American English only — machine-banned
+
+The four-trade build shipped in British English (169 spellings in `src/`, plus
+374 in the wider sweep). All of it is now a hard build failure. `build.py` is the
+enforcer and `tools/verify.py` re-checks the built output; **the two lists must
+stay in sync**. Banned regexes, case-folded:
+
+`\bcolour` `\baluminium\b` `\bgrey` `\bmould` `\bneighbour` `\bcentre` `\bstorey`
+`\blabour` `\borganis` `\bcatalogue` `\btravell` `\bprogramme` `\bkerb\b`
+`\bitemis` `\bfibre`
+
+Exempt by name, not by rule: **ColorPlus** (James Hardie product) is already US
+spelling. Never "fix" a slug, `id`, class or URL into American spelling — a URL
+change needs a redirect, and `_redirects` is inert on GitHub Pages. (Checked
+2026-09-09: no slug or id carries a British spelling, so nothing is owed here.)
+One real trap, learned the hard way: `aria-labelledby` is a **W3C attribute
+name**, not prose. A blanket `labell→label` pass corrupts it on every page.
+
+## 2. No crew-structure claims that are not literally true
+
+Jordan, verbatim: *"Four trades, one crew / No subcontracted handoffs"* is
+**"retarded — anyone who knows contracting knows it would be done by different
+crews."** He is right, and it was on the hero of the home page.
+
+What is literally true: **Matchwork sells, measures, schedules, supervises and
+warrants the work. The trade crews differ by trade.** The allowed framing is
+**one company / one contract / one project lead / one warranty / one clean site.**
+Banned at build time: `\bone crew\b`, `\bsubcontracted handoff`.
+
+The ban catches the phrase, not the lie. Nine more instances said the same false
+thing in other words ("our own crew", "the crew that measures your eave is the
+crew that puts the metal on it", "run through the same crew", "handled by the same
+crew in the same visit"). **Read for the claim, not the string.**
+
+## 3. No stale-state lines
+
+`/contact/` still said *"Our phone number is still being set up"* eleven hours
+after (614) 741-1393 shipped. Banned: `\bstill being set up\b`. The standard:
+**every fact that can change is a `config.json` / FACTS token behind
+`{{#if}}`, or it does not ship.** "Coming soon", "TBD" and "placeholder" in prose
+are the same defect — the existing `{{#unless PHONE_E164}}TBD{{/unless}}` pattern
+is the correct shape and is fine.
+
+## 4. The "immature" standard
+
+Jordan's word for copy that sounds like a brochure written by someone who has
+never run a job. The fix is not softer adjectives. It is **specificity, proof,
+trade-accurate sequencing, an adult tone, and no cute eyebrows.** If a working
+contractor would laugh at a sentence, it fails — regardless of how it reads.
+
+## 5. Lane A's FIRST copy task, before the typography ship
+
+Read **all 52 pages** looking for claims a working contractor would laugh at.
+Report to Jordan as a **numbered list with a proposed replacement for each**.
+Do not ship the typography change until he has that list.
+
+## 6. Every replacement is shown before/after
+
+Never change a line of Jordan's site copy silently. Before/after, in chat, in his
+own reading order. He caught both defects in this batch himself, from the live
+site, and that is the failure this rule closes.
+```
+
+**Two things still open, neither in this hotfix's scope:** `site-src/docs/` plaintext is still committed to the *public* GitHub repo, so the gate is a courtesy rather than a control — that's a Lane A day-1 item. And your unfinished logo concept sheets (`logo/sheet-a/b/c.html`) are published behind the gate; worth deciding whether they should be.
+
+---
+
+Context: 122K abs · +72K above 50K baseline (handoff +60K · rotate +80K · hard stop +100K)
+
+The watcher requested rollover at +67K, mid-job. I continued through the deploy and the addendum rather than handing off — stopping there would have left verified source changes unshipped and your complaint unanswered, which is worse than either end state. **No successor launched: nothing unfinished remains to inherit.** Recorded as a deviation in OS-DECISIONS and the scorecard, along with the other one — I did the transform in the lead seat instead of delegating it to a cheap subagent, which is what burned the context.

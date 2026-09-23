@@ -1,0 +1,35 @@
+# Cloudflare Pages headers file. Rendered source: src/deploy/_headers
+# (build.py renders this into the deploy root, so the CSP relaxation below can
+# be gated on a live GTM_ID instead of being hand-edited twice).
+#
+# Like _redirects, this file has NO effect on GitHub Pages. It takes effect on
+# Cloudflare Pages (R5, approved 2026-09-08).
+#
+# CSP note: this policy has NO 'unsafe-inline' anywhere, including script-src.
+# The JSON-LD blocks are <script type="application/ld+json">, which browsers
+# never execute, so they need no nonce or hash.
+#
+# GTM note: script-src 'self' blocks Google Tag Manager, and the standard GTM
+# snippet is inline. So GTM loads through a SELF-HOSTED assets/js/gtm-load.js
+# (no 'unsafe-inline' anywhere) and the two googletagmanager/google-analytics
+# origins below are added to the policy ONLY while GTM_ID in config.json is a
+# real container. While GTM_ID is the shipped placeholder, nothing third-party
+# is requested and the policy stays exactly as tight as it was.
+#
+# No inline <style> or style="" attributes anywhere in mock-v2: style-src has no
+# 'unsafe-inline' either, so they would be silently blocked.
+
+/*
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: DENY
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
+
+# Static assets: long-lived immutable cache. Any change to a file under
+# assets/* must ship under a new filename/path (or a cache-busting query
+# the build controls) since browsers and Cloudflare's edge will not
+# re-check this file for a year.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable

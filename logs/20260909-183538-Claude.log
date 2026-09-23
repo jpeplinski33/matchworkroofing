@@ -1,0 +1,116 @@
+Successor of session 785cebf3-d52a-46ac-a678-6680ce1b7019 (Claude Fable 5.1, HIGH). Rolled over at +62K. This session EXECUTES Jordan's copy hotfix on the live gated site, then writes the Lane A copy-standards addendum.
+
+**Context: 60K abs · +10K above 50K baseline** (handoff +60K · rotate +80K · hard stop +100K)
+
+## The hotfix was already shipped. I verified it instead of redoing it.
+
+The launcher fired a successor even though session `3ae2f731` had logged `COMPLETE-NO-SUCCESSOR`. The DONE banner on the prompt caught it. I re-verified every claim independently rather than trusting the status file:
+
+| Check | Result |
+|---|---|
+| Live commit | `6a658d4` |
+| GitHub Pages | `status=built` for that exact SHA, 22:32Z |
+| Gate | ON — 79 staticrypt refs in `docs/index.html` |
+| Live `/contact/` (via Cloudflare `--resolve 104.21.40.106`) | HTTP 200, 98,500 bytes, 79 staticrypt refs, **0 plaintext leaks** |
+| British spellings in `mock-v2/src` | **0** |
+| "one crew" | **0** |
+
+**URL:** https://matchworkroofing.com/ — same passphrase as before. If it won't load on your home wifi, that's the Breezeline TLS problem, not the site; check on cellular.
+
+### Before → after, the lines you called out
+
+**Home hero:**
+- ~~Four trades, one crew / No subcontracted handoffs~~
+- **Four trades, one contract** / One project lead from estimate to final walk-through
+
+**Contact page** (the stale phone line, gone):
+- ~~Our phone number is still being set up~~
+- **Call (614) 741-1393 or email us. Every message is read by the person who will do the estimate**, and our hours are… — and it's a `{{#if PHONE_E164}}` token now, not a hard-coded number, so it can't go stale again.
+- **We work one metro on purpose,** so the people who measured your house are the people who run the job, and the site is clean at the end of every work day.
+
+**Spelling:** 169 fixes in `src/`, 374 more across `assets/` and `logo/`. `ColorPlus` (Hardie's product name) untouched.
+
+**It can't come back:** 18 new banned regexes in both `build.py` and `verify.py`. Injecting "Colour matched by one crew; the phone is still being set up" makes the build exit 1 and name all three.
+
+### Two things worth knowing
+
+**The sed pass nearly shipped an accessibility bug.** A blanket `labell→label` rule rewrote `aria-labelledby` → `aria-labeledby` on every location page. All four checkers passed it. Only a word-pair diff audit caught it. New rule: no bulk text transform ships without one.
+
+**Your gate is a courtesy, not a control.** `site-src/docs/` plaintext is still committed to the public GitHub repo — anyone who opens the repo reads the site without the passphrase. The hotfix didn't touch this. It's a Lane A day-1 item.
+
+### Lane A addendum
+
+📄 [lane-a-addendum-copy-standards-2026-09-09.md](/Users/jpmackbookpro/Projects/matchwork-website-revamp-2026-09-06/prompts/lane-a-addendum-copy-standards-2026-09-09.md) · [Show in Finder](/Users/jpmackbookpro/Projects/matchwork-website-revamp-2026-09-06/prompts/) — opened for you.
+
+```markdown
+# Lane A addendum — COPY STANDARDS (2026-09-09)
+
+Rides with `prompts/lane-a-website-execute-2026-09-09.md`. Binding on every copy
+change Lane A makes. Written after Jordan's 17:50 EDT ruling that the live gated
+site reads **"immature"**. The three defects below were fixed and shipped in
+`matchworkroofing` commit `6a658d4`; this addendum exists so they cannot come back.
+
+## 1. American English only — machine-banned
+
+The four-trade build shipped in British English (169 spellings in `src/`, plus
+374 in the wider sweep). All of it is now a hard build failure. `build.py` is the
+enforcer and `tools/verify.py` re-checks the built output; **the two lists must
+stay in sync**. Banned regexes, case-folded:
+
+`\bcolour` `\baluminium\b` `\bgrey` `\bmould` `\bneighbour` `\bcentre` `\bstorey`
+`\blabour` `\borganis` `\bcatalogue` `\btravell` `\bprogramme` `\bkerb\b`
+`\bitemis` `\bfibre`
+
+Exempt by name, not by rule: **ColorPlus** (James Hardie product) is already US
+spelling. Never "fix" a slug, `id`, class or URL into American spelling — a URL
+change needs a redirect, and `_redirects` is inert on GitHub Pages. (Checked
+2026-09-09: no slug or id carries a British spelling, so nothing is owed here.)
+One real trap, learned the hard way: `aria-labelledby` is a **W3C attribute
+name**, not prose. A blanket `labell→label` pass corrupts it on every page.
+
+## 2. No crew-structure claims that are not literally true
+
+Jordan, verbatim: *"Four trades, one crew / No subcontracted handoffs"* is
+**"retarded — anyone who knows contracting knows it would be done by different
+crews."** He is right, and it was on the hero of the home page.
+
+What is literally true: **Matchwork sells, measures, schedules, supervises and
+warrants the work. The trade crews differ by trade.** The allowed framing is
+**one company / one contract / one project lead / one warranty / one clean site.**
+Banned at build time: `\bone crew\b`, `\bsubcontracted handoff`.
+
+The ban catches the phrase, not the lie. Nine more instances said the same false
+thing in other words ("our own crew", "the crew that measures your eave is the
+crew that puts the metal on it", "run through the same crew", "handled by the same
+crew in the same visit"). **Read for the claim, not the string.**
+
+## 3. No stale-state lines
+
+`/contact/` still said *"Our phone number is still being set up"* eleven hours
+after (614) 741-1393 shipped. Banned: `\bstill being set up\b`. The standard:
+**every fact that can change is a `config.json` / FACTS token behind
+`{{#if}}`, or it does not ship.** "Coming soon", "TBD" and "placeholder" in prose
+are the same defect — the existing `{{#unless PHONE_E164}}TBD{{/unless}}` pattern
+is the correct shape and is fine.
+
+## 4. The "immature" standard
+
+Jordan's word for copy that sounds like a brochure written by someone who has
+never run a job. The fix is not softer adjectives. It is **specificity, proof,
+trade-accurate sequencing, an adult tone, and no cute eyebrows.** If a working
+contractor would laugh at a sentence, it fails — regardless of how it reads.
+
+## 5. Lane A's FIRST copy task, before the typography ship
+
+Read **all 52 pages** looking for claims a working contractor would laugh at.
+Report to Jordan as a **numbered list with a proposed replacement for each**.
+Do not ship the typography change until he has that list.
+
+## 6. Every replacement is shown before/after
+
+Never change a line of Jordan's site copy silently. Before/after, in chat, in his
+own reading order. He caught both defects in this batch himself, from the live
+site, and that is the failure this rule closes.
+```
+
+Records written: OS-DECISIONS no-op entry, scorecard at `~/.ai-session-doctrine/claude/9a16c628-.../scorecard.json`. Nothing remains from this prompt — no successor launched. The next real leg is Lane A / Lane B, which waits on your answers to OPEN-DECISIONS.
