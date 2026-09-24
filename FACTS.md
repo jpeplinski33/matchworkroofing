@@ -8,7 +8,10 @@
 - CertainTeed product names are permitted. No certification or warranty representations.
 - Card colors: #152232, #c5a059, white. Exact tagline: Architectural Roofing. Flawless Craftsmanship.
 ## Excluded until evidence and owner-approved wording
-Financing; all warranty/certification promises; manufacturer partnerships; license/bond/insurance claims; free-service policies; drone services; one-day installations; guaranteed cleanup/performance/payouts; projects/reviews/photos not tied to verified owner-authorized evidence. No Owens Corning or bespoke.
+Financing; all warranty/certification promises EXCEPT the ShingleMaster credential below; manufacturer partnerships beyond that credential; license/bond/insurance claims; free-service policies; drone services; one-day installations; guaranteed cleanup/performance/payouts; projects/reviews/photos not tied to verified owner-authorized evidence. No Owens Corning or bespoke.
+
+## CertainTeed ShingleMaster credential — EVIDENCED 2026-09-22
+Email from ctroofing@dataworksintl.com (cc kim.m.constantino@saint-gobain.com), Sep 22 2026: "Congratulations on becoming a CertainTeed ShingleMaster(TM) Roofing Contractor!" — Matchwork is in the Contractor's EDGE program. The email attaches ShingleMaster(TM) badge digital files explicitly "to use on your website and social media," and provides MyEDGE(TM) portal access (myedge.certainteed.com) — CertainTeed's official platform for credentialed contractors with Warranties, Literature, Learning, Marketing, Business Resources. Site MAY state "CertainTeed ShingleMaster(TM) roofing contractor" and display the official badge; MAY use official CertainTeed marketing assets obtained via MyEDGE. Still excluded: SureStart PLUS/star-tier claims (wording pending owner approval), "SELECT ShingleMaster"/Master Craftsman or any higher tier, Integrity Roof System. kim.m.constantino@saint-gobain.com is the probable rep contact (ColorView whitelist email).
 ## Functional state
 Forms had no backend and discarded input. This refresh uses phone/email actions; no assertion that a form request was sent. Email deliverability and call answering are external operational dependencies, not proven by functioning links.
 ## Portfolio rule
