@@ -61,3 +61,13 @@ details.mw-menu[open]::before{content:'';position:fixed;inset:0;background:#1522
 
 /* P4.3 (Sept 25, 2026): pre-existing 768px overflow — the footer email address is one unbreakable word wider than its 4-column cell. Let it wrap only when it must. */
 footer a[href^="mailto:"]{overflow-wrap:anywhere}
+
+/* P5.3 (Sept 25, 2026): sticky mobile call bar (N5). Phones only (<768px); hidden at md and up. z-index 50 sits under the sticky header (60), so the open menu panel and its scrim cover the bar. Body gets matching bottom padding so the footer is never hidden behind it. */
+.mw-callbar{display:none}
+@media(max-width:767px){
+.mw-callbar{display:block;position:fixed;left:0;right:0;bottom:0;z-index:50;background:#fff;border-top:1px solid var(--line);padding:8px 16px calc(8px + env(safe-area-inset-bottom))}
+.mw-callbar-link{display:flex;align-items:center;justify-content:center;min-height:48px;background:var(--navy);color:#fff;font-size:15px;font-weight:600;letter-spacing:.05em;text-decoration:none;border-radius:2px}
+.mw-callbar-link:hover{background:#263b51}
+.mw-callbar-link:focus-visible{outline:3px solid var(--navy);outline-offset:3px}
+body{padding-bottom:calc(65px + env(safe-area-inset-bottom))}
+}
