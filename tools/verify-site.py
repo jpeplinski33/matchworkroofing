@@ -1,7 +1,7 @@
 from pathlib import Path
 from bs4 import BeautifulSoup
 from urllib.parse import urlsplit,unquote
-import json,re,sys
+import json,os,re,sys
 root=Path(__file__).resolve().parents[1]/'site-src/docs'
 errors=[]; pages=list(root.rglob('*.html')); counts={}
 ban=re.compile(r"\blicen[cs](?:ed|ing)\b|\binsured\b|\bbonded\b|financ|owens\s+corning|bespoke|\bguarantee|non.prorat|\bAPR\b|555[ -]|sub.millimeter|\bforensic|superpower|zero stray|100%|\bOAC\b|3901-1-54|3999.22",re.I)
@@ -41,5 +41,37 @@ for p in pages:
  if 'cdn.tailwindcss.com' in raw:errors.append(f'{rel}: development CDN')
  if p.name!='portfolio-map.html' and 'portfolio-map' in raw:errors.append(f'{rel}: retired map link')
  counts[rel]=len(s.get_text(' ',strip=True).split())
+# Class-coverage gate (PRD 3.2): every class used in HTML needs a rule in utilities.css
+# or brand.css, or must be a JS hook string in assets/*.js, or be on the allowlist.
+# MW_UTILITIES_CSS=/path/to/utilities.css checks an alternate build (negative test).
+COVERAGE_ALLOW={'mw-car-prev','mw-car-next',
+ 'prose','prose-slate'}  # Typography-plugin classes, no plugin; styled by brand.css `article p` (PRD 3.1)
+def css_selectors(css):
+ css=re.sub(r'/\*.*?\*/','',css,flags=re.S);sel=[];buf=''
+ for ch in css:
+  if ch=='{':
+   t=buf.strip()
+   if t and not t.startswith('@'):sel.append(t)
+   buf=''
+  elif ch in '};':buf=''
+  else:buf+=ch
+ return sel
+util_path=Path(os.environ.get('MW_UTILITIES_CSS') or root/'assets/utilities.css')
+defined=set()
+for css in (util_path.read_text(),(root/'assets/brand.css').read_text()):
+ for sel in css_selectors(css):
+  for m in re.finditer(r'\.((?:\\.|[A-Za-z0-9_-])+)',sel):defined.add(re.sub(r'\\(.)',r'\1',m.group(1)))
+used={}
+for p in pages:
+ rel=p.relative_to(root).as_posix()
+ for e in BeautifulSoup(p.read_text(),'html.parser').find_all(class_=True):
+  for tok in e.get('class'):
+   u=used.setdefault(tok,[0,rel]);u[0]+=1
+js_hooks=set()
+for j in (root/'assets').glob('*.js'):
+ for m in re.finditer(r"""(["'`])([A-Za-z0-9_-]+)\1""",j.read_text()):
+  if m.group(2) in used:js_hooks.add(m.group(2))
+for tok in sorted(set(used)-defined-js_hooks-COVERAGE_ALLOW):
+ errors.append(f'class without rule: {tok} ({used[tok][0]} uses, e.g. {used[tok][1]})')
 print(json.dumps({'pages':len(pages),'words':counts,'errors':errors},indent=2))
 sys.exit(bool(errors))
