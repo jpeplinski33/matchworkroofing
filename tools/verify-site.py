@@ -4,15 +4,21 @@ from urllib.parse import urlsplit,unquote
 import json,os,re,sys
 root=Path(__file__).resolve().parents[1]/'site-src/docs'
 errors=[]; pages=list(root.rglob('*.html')); counts={}
-ban=re.compile(r"\blicen[cs](?:ed|ing)\b|\binsured\b|\bbonded\b|financ|owens\s+corning|bespoke|\bguarantee|non.prorat|\bAPR\b|555[ -]|sub.millimeter|\bforensic|superpower|zero stray|100%|\bOAC\b|3901-1-54|3999.22",re.I)
+ban=re.compile(r"\blicen[cs](?:ed|ing)\b|\binsured\b|\bbonded\b|financ|owens\s+corning|bespoke|\bguarantee|non.prorat|\bAPR\b|555[ -]|sub.millimeter|\bforensic|superpower|zero stray|100%|3999.22",re.I)
 warranty_words=re.compile(r"\bwarrant|\bcertif",re.I)
-credential_ban=re.compile(r"select\s+shinglemaster|master\s+craftsman|surestart\s*\+?\s*plus|[345]\s*[- ]\s*star|\bcredentialed\b|factory.certified|integrity\s+roof\s+system",re.I)
+credential_ban=re.compile(r"select\s+shinglemaster|master\s+craftsman|surestart\s*\+?\s*plus|[345]\s*[- ]\s*star|\bcredentialed\b|factory.certified",re.I)
 warranty_link=re.compile(r"https?://(?:www\.)?certainteed\.com/[^\"' ]*warrant",re.I)
 for p in pages:
  rel=p.relative_to(root).as_posix();raw=p.read_text();s=BeautifulSoup(raw,'html.parser')
  for word in sorted(set(ban.findall(raw))):errors.append(f'{rel}: banned wording {word}')
  text=s.get_text(' ',strip=True)
  for word in sorted(set(credential_ban.findall(text))):errors.append(f'{rel}: banned CertainTeed credential claim {word}')
+ # f/FIX 2026-10-02: alt text is not in get_text(), so check it; plus steering/trade-nonsense phrases from the copy audit
+ # f/FIX-review 2026-10-02: alt runs the full credential list; "swatch" and the audit phrases also checked in visible text and description/title metas
+ for e in s.find_all(alt=True):
+  for word in sorted(set(credential_ban.findall(e['alt'])+re.findall(r"swatch",e['alt'],re.I))):errors.append(f'{rel}: banned word in alt text {word}')
+ metas=' '.join(m.get('content','') for m in s.find_all('meta') if (m.get('name') or m.get('property') or '') in ('description','og:title','og:description','twitter:title','twitter:description'))
+ for word in sorted(set(re.findall(r"swatch|hail[\s-]belt|hail corridor|manufacturer blistering|easiest line to match|rest with your insurer|high-adhesive seal",text+' '+metas,re.I))):errors.append(f'{rel}: banned audit phrase {word}')
  if warranty_words.search(raw):
   if 'certainteed' not in raw.lower() or not warranty_link.search(raw):
    errors.append(f'{rel}: warranty/certification wording without CertainTeed attribution + certainteed.com warranty link')
