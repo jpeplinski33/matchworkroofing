@@ -63,3 +63,11 @@ configure-payment-link.py, and separate publication approval. Account ownership 
 be direct MATCHWORK; prohibited Jobber Connect acct_1UMOBmKaJHVNy25i is blocked in tool.
 No server/webhook is needed for this standalone link; reconcile settled payments in
 Stripe before marking the corresponding Jobber invoice paid. No automatic Jobber sync.
+
+## 2026-10-03 ~11:55 EDT — LIVE link wired (Claude session 8ce837b6)
+Direct account acct_1UMTYWK98YL9sAug activated (charges + payouts enabled, ACH + card capabilities active).
+Live link plink_1UMVCLK98YL9sAugHoirn8d3 → https://buy.stripe.com/dRm7sM6Jk34jgrX9OhbZe00 : us_bank_account only,
+customer-entered USD amount $1–$10,000 (Stripe's cap without a support request), required Invoice number +
+Property address fields, hosted confirmation message. Verified by tools/configure-payment-link.py --mode live.
+Branch pay-invoice-live-2026-10-03 rebuilt on main 983671e (codex/pay-invoice-20261003 superseded). Owner said
+"I want to embed this on my website asap" → published. Card payments: emailed Stripe invoice with the fee line.
