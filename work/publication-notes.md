@@ -16,3 +16,6 @@ Embedded PDF multimedia lacks mobile support. Hosted audio + normal PDF URI link
 - Narration plays and pauses with measured duration 650.292 seconds; ?listen=1 correctly displays tap-to-play fallback when browser blocks autoplay.
 - PDF all six pages visually inspected; top URI annotation points to the hosted player.
 - Existing broad verifier does not understand page-local inline CSS and reports those classes as missing. Its content regex also flags approved non-credential “Master Craftsmanship,” “financially,” CSS 100%, the sentence “100% complete,” and a decorative lightbulb. These were manually reviewed as false positives/approved presentation; not changed by disabling the verifier. A real missing Bexley footer destination was fixed to the existing service-area page. Targeted article checks pass.
+
+## LIVE
+Published commit 7dc025fad068633716375571a024ebf254b820c8 to main with explicit owner authorization. GitHub Pages built successfully. Public article, MP3, PDF, Guides index and sitemap HTTP200; MP3/PDF identical to local SHA-256. Public audio play/pause verified with headless Chromium via existing SOCKS5 proxy127.0.0.1:18080 (direct local DNS/network blocks domain). Evidence: live-verification.json.
