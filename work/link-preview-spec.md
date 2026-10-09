@@ -7,3 +7,6 @@ Plan: verify Apple native fetch, complete explicit metadata and shorten social t
 Publication: user workspace calls out live production deployment as a human gate; prepare concrete change and preview before requesting approval if publication is needed.
 Alternatives: stale Messages cache or client rendering settings may explain absence even with valid metadata. Do not claim missing tags alone prove root cause.
 Cost/token telemetry unavailable.
+
+## Publication authorized
+Jordan replied “yes” on 2026-10-09 to publishing the reviewed preview update. Publish bounded change and verify public metadata/image. No further approval needed.
