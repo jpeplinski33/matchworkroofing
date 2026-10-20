@@ -128,3 +128,6 @@ Branch pay-button-2026-10-20, commit e14e2f3, NOT pushed. Topbar button renamed 
 ## 2026-10-20 — Codex release authorization and plan
 Jordan's current handoff explicitly authorizes finishing publication (fast-forward main and push), relabeling live Stripe field to Invoice or proposal number, and posting completion to Slack. Keep website link ACH-only; Link remains available through emailed card invoices. No screen focus changes: headless verification only. Remote main is dc0047b; local main 2da5736 and release e14e2f3 include only the intended badge/payment changes. Existing untracked files are outside this release.
 Validation: scoped independent copy audit passed; verifier reports only the 41 known architect-article findings. Review report exists. Next: Stripe POST + GET validation, payment tests, headless layout checks, fast-forward/push, Pages build confirmation, completion records.
+
+### Stripe update complete
+Live GET confirms Invoice or proposal number and Property address required; ACH-only payment link preserved. Link capability active/default configuration on. Payment validator and existing Python/JavaScript tests pass; docs and site-src/docs identical. Website publication next.

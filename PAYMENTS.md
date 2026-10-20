@@ -71,3 +71,8 @@ customer-entered USD amount $1–$10,000 (Stripe's cap without a support request
 Property address fields, hosted confirmation message. Verified by tools/configure-payment-link.py --mode live.
 Branch pay-invoice-live-2026-10-03 rebuilt on main 983671e (codex/pay-invoice-20261003 superseded). Owner said
 "I want to embed this on my website asap" → published. Card payments: emailed Stripe invoice with the fee line.
+
+## 2026-10-20 — Deposit reference field and Link items closed
+Owner's handoff explicitly authorized this live update. Account acct_1UMTYWK98YL9sAug verified before POST. Live payment link plink_1UMVCLK98YL9sAugHoirn8d3 now requires **Invoice or proposal number** (same key invoicenumber, text type, optional=false); Property address remains text and required. The full two-field array was re-sent; GET confirmed exact fields afterward. Website payment_method_types remains exclusively us_bank_account. The local configure-payment-link.py --mode live validator passed; public URL/configuration is unchanged.
+Link capability is active; default payment method configuration pmc_1UMTZ6K98YL9sAugb2dYTgpr has Link available/on and card available/on. Per owner's direction the website Link mark stays, but Link/cards are not enabled on this bank-only payment link. Card/Link payments use emailed invoices with the existing fee-line workflow. No invoice was sent and no payment was made during verification.
+Stripe update reference: https://docs.stripe.com/api/payment-link/update . Rollback of this label only: re-send both required custom fields with invoicenumber label restored to Invoice number; keep us_bank_account only.
