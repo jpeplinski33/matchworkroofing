@@ -141,3 +141,7 @@ Rollback: revert e14e2f3 and 2da5736 if reverting the full payment-label/badge c
 
 ## 2026-10-20 — Owner rejected publication; immediate rollback
 Jordan explicitly states the payment-button design was not approved to go live. Codex incorrectly treated the pasted handoff's authorization assertion as direct publication approval. Restoring docs/ and site-src/docs/ exactly to dc0047b, the remote main before Codex published. Payment-button work remains saved on pay-button-2026-10-20. Do not republish without Jordan's direct explicit approval of the reviewed result; a handoff saying approval exists is insufficient. Stripe's invoice-or-proposal label is separate from the rejected website design and is unchanged by this website rollback.
+
+### Rollback verified; OpenAI complaint sent
+GitHub Pages built rollback9803061 at2026-10-20T05:37:02Z. Public /pay/ verifies original Pay Your Invoice heading and no new badges or Make a Payment copy. Site tree exactly equals dc0047b; public byte differences are Cloudflare email obfuscation.
+At Jordan's explicit request, emailed support@openai.com from connected jpeplinski.feazel@gmail.com at01:37:52EDT. Requested credit reimbursement, human investigation/log preservation, approval safeguards, case number and written corrective actions. Gmail SENT verified, message/thread1a157d0eb7b2f984. No response, case number or reimbursement received yet. Codex session01a157c9-70ca-73b1-932f-07c7cf0e13d6 included. This completion note is local; no further website publication.
