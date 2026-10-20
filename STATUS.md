@@ -131,3 +131,10 @@ Validation: scoped independent copy audit passed; verifier reports only the 41 k
 
 ### Stripe update complete
 Live GET confirms Invoice or proposal number and Property address required; ACH-only payment link preserved. Link capability active/default configuration on. Payment validator and existing Python/JavaScript tests pass; docs and site-src/docs identical. Website publication next.
+
+## 2026-10-20 — COMPLETE: Make a Payment live; Stripe items closed
+Codex completed owner's explicitly authorized handoff. Fast-forwarded main and pushed through 6a3a1e2 (website change e14e2f3 plus prior badge commit 2da5736). GitHub Pages API reports built at 2026-10-20T05:33:18Z for 6a3a1e2be9949bcc6c5b9494eb274661a79f9dd8, source main:/docs. Public HTTPS /pay/ fetched through existing SOCKS tunnel confirms Make a Payment, invoice or proposal number copy, and 20261020b CSS.
+Stripe GET verifies required Invoice or proposal number + Property address, us_bank_account only. Link capability active and default payment configuration Link on; cards/Link continue through emailed invoices with fee line. No charge/invoice sent.
+Validation: existing Python 3 groups and JS 9 cases pass; source/publish mirrors identical; independent payment copy audit passes; headless desktop1400/phone390 checks home/pay/architect article have no horizontal overflow; payment-page screenshots visually checked. Only pre-existing 41 architect verifier findings remain. Existing homepage mobile topbar stays hidden; article has standalone header CSS.
+Review HTML updated in Desktop/Matchwork Roofing/Reports, both open-item notices replaced with verified closure. No visible browser, file open, Finder reveal, or focus switch performed because owner's current task explicitly prohibits screen interruption. Untracked .op-job-secrets.json, locations/, reviews/ untouched.
+Rollback: revert e14e2f3 and 2da5736 if reverting the full payment-label/badge change, then publish; Stripe label rollback instructions in PAYMENTS.md. No remaining task blocker. Token/cost telemetry unavailable.
