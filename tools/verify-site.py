@@ -37,7 +37,8 @@ for p in pages:
   elif u.fragment and t.suffix=='.html':
    target=BeautifulSoup(t.read_text(),'html.parser')
    if not target.find(id=unquote(u.fragment)):errors.append(f'{rel}: missing anchor {u.path}#{u.fragment}')
- if p.name!='portfolio-map.html':
+ # Business-card QR redirect stubs (2026-11-06): /jordan and /sloan forward to the booking page; change the url in the stub to repoint a printed card
+ if p.name!='portfolio-map.html' and rel not in ('jordan/index.html','sloan/index.html'):
   if len(s.find_all('h1'))!=1:errors.append(f'{rel}: expected one h1')
   if not s.select('a[href="tel:+16147411393"]'):errors.append(f'{rel}: missing phone link')
   for f in s.find_all('form'):
